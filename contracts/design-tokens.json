@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "colors": {
+    "background": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "text": "#0F172A",
+    "secondaryText": "#475569",
+    "border": "#CBD5E1",
+    "primary": "#1D4ED8",
+    "primaryHover": "#1E40AF",
+    "primaryText": "#FFFFFF",
+    "danger": "#B91C1C",
+    "success": "#166534",
+    "warning": "#92400E",
+    "focus": "#2563EB"
+  },
+  "typography": {
+    "fontFamily": "system-ui, -apple-system, Segoe UI, sans-serif",
+    "monoFamily": "ui-monospace, SFMono-Regular, Consolas, monospace",
+    "body": {
+      "size": 16,
+      "lineHeight": 24
+    },
+    "secondary": {
+      "size": 14,
+      "lineHeight": 20
+    },
+    "title": {
+      "size": 28,
+      "lineHeight": 36,
+      "weight": 600
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48
+  ],
+  "radius": {
+    "control": 8,
+    "panel": 12
+  },
+  "layout": {
+    "maxContentWidth": 1200,
+    "mobilePadding": 16,
+    "desktopPadding": 24,
+    "minTarget": 44,
+    "inputHeight": 44,
+    "breakpoints": [
+      640,
+      1024
+    ]
+  },
+  "motion": {
+    "durationMs": 120,
+    "reducedMotionMs": 0
+  }
+}

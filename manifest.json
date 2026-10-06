@@ -1,0 +1,106 @@
+{
+  "baseline": "1.0",
+  "status": "documentation only",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 3367,
+      "sha256": "80c4d05099fe283a0e029ad2399b06f2436232195e5c1aa6e6c3f415021f082a"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2426,
+      "sha256": "8243ace3857e2ff819ef8dc8d49bbc90926817b9bfeef57b167fc66697d9fc07"
+    },
+    {
+      "path": "contracts/design-tokens.json",
+      "bytes": 1123,
+      "sha256": "1215655545e3a589c4fd70fc3726856b294adb195d2275ad11fced3a968cb26e"
+    },
+    {
+      "path": "contracts/openapi.json",
+      "bytes": 96417,
+      "sha256": "c495583083750a5e1653f641bd69f3d23ed10292725fc08b8a2ba8a45d228ecc"
+    },
+    {
+      "path": "contracts/variant-registry.json",
+      "bytes": 334,
+      "sha256": "bc51d4ab8c89dad0fef2eeb88a40f8190fe5e55925ce11d9179068a3a1e6b036"
+    },
+    {
+      "path": "docs/00-design-brief.md",
+      "bytes": 2885,
+      "sha256": "362a1741978f7e131a81ff88d4fc7d3561dbcb36da195f86611c0713cabcecc1"
+    },
+    {
+      "path": "docs/01-product.md",
+      "bytes": 5147,
+      "sha256": "b74142766562d64cd1771b0ff4686ef5358c71f3db792d788ede4d57972dffb4"
+    },
+    {
+      "path": "docs/02-permissions.md",
+      "bytes": 3667,
+      "sha256": "7eabdfaa8ed275429d5143e277a3c798287b90ec2de4a3d2add3c50c7c8ae364"
+    },
+    {
+      "path": "docs/03-architecture.md",
+      "bytes": 4263,
+      "sha256": "725fd7cfb742bc62bfcc7b71358a8486affd0dd6cc8651e8cb28425be7827db3"
+    },
+    {
+      "path": "docs/04-data-model.md",
+      "bytes": 5041,
+      "sha256": "d3a4507f4e541bcd52a0012d20b2ac165fe82da6ebebd96db1e95e9d1feaa0fc"
+    },
+    {
+      "path": "docs/05-cryptography.md",
+      "bytes": 5106,
+      "sha256": "eab53fc724d5d903cbb4d072ac4728acfddce78279649ce4a1d164edeec4d764"
+    },
+    {
+      "path": "docs/06-privacy-security.md",
+      "bytes": 7344,
+      "sha256": "a05aa9e60bb48e039d55d33514afabf51eb03333a4747fa171c8a2b19375113b"
+    },
+    {
+      "path": "docs/07-design-system.md",
+      "bytes": 4466,
+      "sha256": "196c844ec111e7655ce37d0c70ab401c8c8075d115e60989674ab4641c07f5d4"
+    },
+    {
+      "path": "docs/08-verification.md",
+      "bytes": 3313,
+      "sha256": "83288653ef3a68a525606a3496c849452efd652e5cf4247b594025979f4d785e"
+    },
+    {
+      "path": "docs/09-benchmarks.md",
+      "bytes": 3863,
+      "sha256": "60152a5e5954b5c41ccccff7d72cf7f04616f5767b1b3888c15fb8d6f42f92e1"
+    },
+    {
+      "path": "docs/10-decisions.md",
+      "bytes": 2598,
+      "sha256": "d5e2dc06c814f8dcbf8eb84fceaa44a619385a238c724ec2a482c0e9b6a640a6"
+    },
+    {
+      "path": "docs/11-delivery.md",
+      "bytes": 2359,
+      "sha256": "4e58944be71f2afcfba651279d72c18148765f8a97e0a62151087215555c84cc"
+    },
+    {
+      "path": "docs/12-traceability.md",
+      "bytes": 2211,
+      "sha256": "39ce44a19240635f8bdd78d0507a3cc511489783012c0a579ccccb77c84b47fb"
+    },
+    {
+      "path": "docs/13-agent-handoff.md",
+      "bytes": 1124,
+      "sha256": "980a6a18121d1542f2c9b4865b231e30421da90971da278ad336d9b9e5043731"
+    },
+    {
+      "path": "docs/14-report-template.md",
+      "bytes": 2002,
+      "sha256": "5ee3c14054b76c0605bc865367db5055e6c440ff3f8f9d9bb577d5744bd38fc3"
+    }
+  ]
+}
