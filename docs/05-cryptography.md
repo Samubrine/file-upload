@@ -1,12 +1,10 @@
 # Cryptography specification
 
 ## Exact registry
-AES-128-CBC, AES-128-CFB128, AES-128-OFB, AES-128-CTR;
-AES-192-CBC, AES-192-CFB128, AES-192-OFB, AES-192-CTR;
 AES-256-CBC, AES-256-CFB128, AES-256-OFB, AES-256-CTR;
 DES-CBC; RC4-256.
 
-Stable wire IDs use lowercase: aes-128-cbc, aes-128-cfb128, aes-128-ofb, aes-128-ctr, aes-192-cbc, aes-192-cfb128, aes-192-ofb, aes-192-ctr, aes-256-cbc, aes-256-cfb128, aes-256-ofb, aes-256-ctr, des-cbc, rc4-256. Default: aes-256-ctr. Exactly fourteen copies per business payload. No ECB, no chained AES→RC4→DES construction. RC4 is a stream cipher, has no CBC/CFB/OFB/CTR mode. DES is single DES, not Triple DES.
+Stable wire IDs use lowercase: aes-256-cbc, aes-256-cfb128, aes-256-ofb, aes-256-ctr, des-cbc, rc4-256. Default: aes-256-ctr. Exactly six copies per business payload. No ECB, no chained AES→RC4→DES construction. RC4 is a stream cipher, has no CBC/CFB/OFB/CTR mode. DES is single DES, not Triple DES.
 
 ## Cipher parameters
 AES uses 16/24/32-byte derived keys and 16-byte IVs. CFB is full-block CFB128, not CFB8. DES uses an 8-byte key (56 effective key bits, parity ignored by typical libraries), 8-byte IV, CBC. RC4 uses a 32-byte key unique to each envelope, no IV, standard RC4 with no implicit drop bytes. DES weak/semiweak derived keys must be rejected and new salt generated; record this behavior in vectors/benchmarks. RC4 and DES are educational, not suitable for safeguarding real personal data. CFB/OFB may be deprecated in Go; isolate required educational usage and document exceptions rather than suppressing broad checks.
