@@ -1,0 +1,98 @@
+:root {
+  /* Colors from design-tokens.json */
+  --color-background: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-text: #0F172A;
+  --color-secondary-text: #475569;
+  --color-border: #CBD5E1;
+  --color-primary: #1D4ED8;
+  --color-primary-hover: #1E40AF;
+  --color-primary-text: #FFFFFF;
+  --color-danger: #B91C1C;
+  --color-danger-hover: #991B1B;
+  --color-success: #166534;
+  --color-warning: #92400E;
+  --color-focus: #2563EB;
+
+  /* Typography */
+  --font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+
+  --text-body-size: 16px;
+  --text-body-line-height: 24px;
+  --text-secondary-size: 14px;
+  --text-secondary-line-height: 20px;
+  --text-title-size: 28px;
+  --text-title-line-height: 36px;
+  --text-title-weight: 600;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Radius */
+  --radius-control: 8px;
+  --radius-panel: 12px;
+
+  /* Layout */
+  --max-content-width: 1200px;
+  --mobile-padding: 16px;
+  --desktop-padding: 24px;
+  --min-target: 44px;
+  --input-height: 44px;
+
+  /* Motion */
+  --duration-ms: 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-ms: 0ms;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--text-body-size);
+  line-height: var(--text-body-line-height);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+

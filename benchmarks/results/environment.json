@@ -1,0 +1,9 @@
+{
+  "arch": "amd64",
+  "cpus": 12,
+  "environment_id": "windows-amd64-20261006222440",
+  "go_version": "go1.26.4",
+  "notes": "Standard single-process local execution, monotonic timing",
+  "os": "windows",
+  "timestamp": "2026-10-06T15:24:40Z"
+}

@@ -1,0 +1,21 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+
+# Database files
+data/*.db
+data/*.db-wal
+data/*.db-shm
+*.db
+*.db-wal
+*.db-shm
+
+# Frontend dependencies and build cache
+frontend/node_modules/
+frontend/.vite/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+
