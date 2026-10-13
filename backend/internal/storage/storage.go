@@ -89,7 +89,7 @@ type QuotaUsage struct {
 // and applies database migrations.
 func OpenDB(dataSourceName string) (*DB, error) {
 	if dir := filepath.Dir(dataSourceName); dir != "" && dir != "." {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0o750); err != nil {
 			return nil, fmt.Errorf("failed to create db directory: %w", err)
 		}
 	}
@@ -108,7 +108,7 @@ func OpenDB(dataSourceName string) (*DB, error) {
 	}
 	for _, p := range pragmas {
 		if _, err := db.Exec(p); err != nil {
-			db.Close()
+			_ = db.Close()
 			return nil, fmt.Errorf("failed to exec pragma %s: %w", p, err)
 		}
 	}
@@ -117,12 +117,12 @@ func OpenDB(dataSourceName string) (*DB, error) {
 
 	sdb := &DB{DB: db}
 	if err := sdb.applyInitialSchema(); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, fmt.Errorf("failed to apply migrations: %w", err)
 	}
 
 	if err := sdb.purgeExpiredSessions(); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, fmt.Errorf("purge expired sessions: %w", err)
 	}
 	return sdb, nil
@@ -337,12 +337,12 @@ func (db *DB) DeleteUser(tx *sql.Tx, id string) error {
 	for rows.Next() {
 		var cID, mID string
 		if err := rows.Scan(&cID, &mID); err != nil {
-			rows.Close()
+			_ = rows.Close()
 			return err
 		}
 		payloadIDs = append(payloadIDs, cID, mID)
 	}
-	rows.Close()
+	_ = rows.Close()
 
 	// Delete user (cascades to files, grants, sessions)
 	if _, err := tx.Exec("DELETE FROM users WHERE id = ?", id); err != nil {

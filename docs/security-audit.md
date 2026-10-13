@@ -24,9 +24,9 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V18 | Low | httpapi/handlers_files.go download | httpapi/sec_v18_disposition_test.go | fix(sec): V15-V20 secure __Host- cookies and HSTS, CSP, requ | fixed | Content-Disposition %q mangles non-ASCII names |
 | V19 | Low | httpapi/handlers_files.go download | httpapi/sec_v19_variant_test.go | fix(sec): V15-V20 secure __Host- cookies and HSTS, CSP, requ | fixed | Bad variant returns 500; Timing-Allow-Origin: * on benchmark downloads |
 | V20 | Low | storage/storage.go, cmd/server | storage/sec_v20_purge_test.go | fix(sec): V15-V20 secure __Host- cookies and HSTS, CSP, requ | fixed | Expired sessions never purged |
-| V21 | High | backend/go.mod toolchain | govulncheck ./... | — | open | 12 reachable stdlib vulns in go1.26.4 (net/http, crypto/tls, textproto, asn1); fixed in go1.26.9 |
-| V22 | Medium | httpapi/server.go static fallback | httpapi/sec_v22_static_test.go | — | open | Static fallback joins request path to disk path (gosec G703) |
-| V23 | Low | auth/password.go, storage/storage.go, cmd/server | gosec ./... rerun | — | open | Hygiene: uint8 narrowing in legacy Argon2 parse (G115), 0755 data dir (G301), env value logged raw (G706), unchecked errors (G104) |
+| V21 | High | backend/go.mod toolchain | govulncheck ./... | toolchain go1.26.9 (go.mod, go.work, benchmarks) | fixed | 12 reachable stdlib vulns in go1.26.4 (net/http, crypto/tls, textproto, asn1); fixed in go1.26.9 |
+| V22 | Medium | httpapi/server.go static fallback | httpapi/sec_v22_static_test.go | static root served via fs.FS; guard test | fixed | Static fallback joins request path to disk path (gosec G703) |
+| V23 | Low | auth/password.go, storage/storage.go, cmd/server | gosec ./... rerun | hygiene; remaining scanner notes justified in ledger | fixed | Hygiene: uint8 narrowing in legacy Argon2 parse (G115), 0755 data dir (G301), env value logged raw (G706), unchecked errors (G104) |
 
 ## Accepted scanner findings (justified, not fixed)
 

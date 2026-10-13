@@ -1,9 +1,11 @@
 package httpapi
 
 import (
+	"io/fs"
 	"net/http"
 	"os"
-	"path/filepath"
+	"path"
+	"strings"
 
 	"ciphervault/internal/files"
 	"ciphervault/internal/sharing"
@@ -109,21 +111,20 @@ func (s *Server) setupRoutes() {
 
 	// Static SPA fallback
 	if s.staticDir != "" {
-		fileServer := http.FileServer(http.Dir(s.staticDir))
+		// Serve only through an fs.FS rooted at the static directory. fs.ValidPath
+		// refuses "..", absolute and empty segments, so nothing outside the root is reachable.
+		rootFS := os.DirFS(s.staticDir)
+		fileServer := http.FileServer(http.FS(rootFS))
 		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-			path := filepath.Join(s.staticDir, filepath.Clean(r.URL.Path))
-			info, err := os.Stat(path)
-			if err == nil && !info.IsDir() {
-				fileServer.ServeHTTP(w, r)
-				return
+			name := strings.TrimPrefix(path.Clean("/"+r.URL.Path), "/")
+			if name != "" && fs.ValidPath(name) {
+				if info, err := fs.Stat(rootFS, name); err == nil && !info.IsDir() {
+					fileServer.ServeHTTP(w, r)
+					return
+				}
 			}
-			// If not found, serve index.html for client-side routing
-			indexPath := filepath.Join(s.staticDir, "index.html")
-			if _, err := os.Stat(indexPath); err == nil {
-				http.ServeFile(w, r, indexPath)
-				return
-			}
-			http.NotFound(w, r)
+			// Not a file: serve index.html for client-side routing.
+			http.ServeFileFS(w, r, rootFS, "index.html")
 		})
 	}
 

@@ -172,8 +172,7 @@ func (s *Service) Upload(c context.Context, ownerID, filename string, content []
 		return nil, err
 	}
 
-	cleanFilename := filepath.Base(filename)
-	cleanFilename, err = validateFilename(filename)
+	cleanFilename, err := validateFilename(filename)
 	if err != nil {
 		return nil, err
 	}

@@ -91,7 +91,11 @@ func verifyArgon2(password, encodedHash string) (bool, error) {
 		case "t":
 			iterations = uint32(val)
 		case "p":
-			parallelism = uint8(val)
+			p8, err := strconv.ParseUint(kv[1], 10, 8)
+			if err != nil {
+				return false, ErrInvalidHash
+			}
+			parallelism = uint8(p8)
 		}
 	}
 

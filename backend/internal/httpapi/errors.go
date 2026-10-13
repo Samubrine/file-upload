@@ -38,7 +38,7 @@ func writeServiceError(w http.ResponseWriter, r *http.Request, err error, confli
 	case errors.Is(err, storage.ErrConflict):
 		WriteError(w, r, http.StatusConflict, conflictCode, "The item changed or conflicts with existing data. Reload and try again.")
 	default:
-		log.Printf("request %s: internal error: %v", GetRequestID(r), err)
+		log.Printf("request %s: internal error: %q", GetRequestID(r), err.Error())
 		WriteError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Something went wrong. Please try again.")
 	}
 }

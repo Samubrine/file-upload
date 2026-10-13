@@ -23,7 +23,6 @@ type testClient struct {
 	cookie       *http.Cookie
 	csrfToken    string
 	username     string
-	userID       string
 	etag         string
 }
 

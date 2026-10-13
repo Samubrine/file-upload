@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"ciphervault/internal/auth"
@@ -157,7 +156,6 @@ func (m *SessionAuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 // UploadQueue limits concurrent heavy upload/replace jobs
 type UploadQueue struct {
 	sem  chan struct{}
-	wait sync.Mutex
 }
 
 func NewUploadQueue(capacity int) *UploadQueue {
