@@ -15,17 +15,19 @@ import (
 var (
 	ErrInvalidHash         = errors.New("invalid password hash format")
 	ErrIncompatibleVersion = errors.New("incompatible hash version")
+	ErrPasswordTooLong     = errors.New("password exceeds 72 bytes")
 )
+
+// MaxPasswordBytes is bcrypt's input limit. Longer passwords are rejected rather
+// than truncated, because truncation lets any suffix authenticate.
+const MaxPasswordBytes = 72
 
 // HashPassword generates a standard bcrypt hash string from password.
 func HashPassword(password string) (string, error) {
-	// Bcrypt has a 72-byte max length limit. For passwords under 72 bytes, use directly;
-	// if longer, truncate or hash cleanly.
-	pwdBytes := []byte(password)
-	if len(pwdBytes) > 72 {
-		pwdBytes = pwdBytes[:72]
+	if len(password) > MaxPasswordBytes {
+		return "", ErrPasswordTooLong
 	}
-	hash, err := bcrypt.GenerateFromPassword(pwdBytes, bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", fmt.Errorf("bcrypt hash failure: %w", err)
 	}
@@ -35,11 +37,12 @@ func HashPassword(password string) (string, error) {
 // VerifyPassword verifies that a plaintext password matches either bcrypt or Argon2id.
 func VerifyPassword(password, encodedHash string) (bool, error) {
 	if strings.HasPrefix(encodedHash, "$2a$") || strings.HasPrefix(encodedHash, "$2b$") || strings.HasPrefix(encodedHash, "$2y$") {
-		pwdBytes := []byte(password)
-		if len(pwdBytes) > 72 {
-			pwdBytes = pwdBytes[:72]
+		if len(password) > MaxPasswordBytes {
+			// Still spend a comparison so overlong attempts are not faster.
+			_ = bcrypt.CompareHashAndPassword([]byte(encodedHash), []byte(password[:MaxPasswordBytes]))
+			return false, nil
 		}
-		err := bcrypt.CompareHashAndPassword([]byte(encodedHash), pwdBytes)
+		err := bcrypt.CompareHashAndPassword([]byte(encodedHash), []byte(password))
 		if err != nil {
 			return false, nil
 		}

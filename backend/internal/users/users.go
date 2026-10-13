@@ -20,7 +20,7 @@ var (
 	ErrPasswordMismatch   = errors.New("invalid current password")
 	ErrUserNotFound       = errors.New("user not found")
 	ErrNoticeRequired     = errors.New("privacy notice must be acknowledged")
-	ErrPasswordComplexity = errors.New("password must be between 12 and 128 characters")
+	ErrPasswordComplexity = errors.New("password must be 12 to 128 characters and at most 72 bytes")
 )
 
 const (
@@ -72,7 +72,7 @@ func NewService(db *storage.DB, kp crypto.KeyProvider, activeRootKeyID string, i
 
 func ValidatePassword(p string) error {
 	runes := []rune(p)
-	if len(runes) < 12 || len(runes) > 128 || len([]byte(p)) > 512 {
+	if len(runes) < 12 || len(runes) > 128 || len(p) > auth.MaxPasswordBytes {
 		return ErrPasswordComplexity
 	}
 	return nil

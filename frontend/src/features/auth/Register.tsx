@@ -222,7 +222,7 @@ export const Register: React.FC<{ onSwitchToLogin: () => void }> = ({ onSwitchTo
               </button>
             </div>
             <span style={{ fontSize: '11px', color: 'var(--color-secondary-text)' }}>
-              Salted Argon2id hash (memory ≥ 19 MiB, iterations ≥ 2)
+              12 or more characters, at most 72 bytes (about 72 plain letters). Stored as a salted bcrypt hash.
             </span>
           </div>
 
