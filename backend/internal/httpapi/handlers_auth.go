@@ -58,7 +58,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_PASSWORD", err.Error())
 			return
 		}
-		WriteError(w, r, http.StatusConflict, "REGISTRATION_CONFLICT", err.Error())
+		writeServiceError(w, r, err, "REGISTRATION_CONFLICT")
 		return
 	}
 

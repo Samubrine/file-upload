@@ -83,9 +83,9 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 		case files.ErrInvalidCategory:
 			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_CATEGORY", err.Error())
 		case files.ErrQuotaExceeded:
-			WriteError(w, r, http.StatusConflict, "QUOTA_EXCEEDED", err.Error())
+			writeServiceError(w, r, err, "QUOTA_EXCEEDED")
 		default:
-			WriteError(w, r, http.StatusInternalServerError, "UPLOAD_ERROR", err.Error())
+			writeServiceError(w, r, err, "UPLOAD_ERROR")
 		}
 		return
 	}
@@ -102,7 +102,7 @@ func (s *Server) handleListMine(w http.ResponseWriter, r *http.Request) {
 
 	items, total, err := s.filesService.ListMine(r.Context(), session.UserID, offset, limit)
 	if err != nil {
-		WriteError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", err.Error())
+		writeServiceError(w, r, err, "INTERNAL_ERROR")
 		return
 	}
 	if items == nil {
@@ -124,7 +124,7 @@ func (s *Server) handleListShared(w http.ResponseWriter, r *http.Request) {
 
 	items, total, err := s.filesService.ListShared(r.Context(), session.UserID, offset, limit)
 	if err != nil {
-		WriteError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", err.Error())
+		writeServiceError(w, r, err, "INTERNAL_ERROR")
 		return
 	}
 	if items == nil {
@@ -145,7 +145,7 @@ func (s *Server) handleListListed(w http.ResponseWriter, r *http.Request) {
 
 	items, total, err := s.filesService.ListListed(r.Context(), offset, limit)
 	if err != nil {
-		WriteError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", err.Error())
+		writeServiceError(w, r, err, "INTERNAL_ERROR")
 		return
 	}
 	if items == nil {
@@ -203,7 +203,7 @@ func (s *Server) handleRenameFile(w http.ResponseWriter, r *http.Request) {
 		case files.ErrExtensionChange:
 			WriteError(w, r, http.StatusUnprocessableEntity, "EXTENSION_CHANGE", err.Error())
 		default:
-			WriteError(w, r, http.StatusConflict, "RENAME_CONFLICT", err.Error())
+			writeServiceError(w, r, err, "RENAME_CONFLICT")
 		}
 		return
 	}
@@ -230,7 +230,7 @@ func (s *Server) handleDeleteFile(w http.ResponseWriter, r *http.Request) {
 		case files.ErrForbidden:
 			WriteError(w, r, http.StatusForbidden, "FORBIDDEN", "Only owner can delete file")
 		default:
-			WriteError(w, r, http.StatusConflict, "DELETE_CONFLICT", err.Error())
+			writeServiceError(w, r, err, "DELETE_CONFLICT")
 		}
 		return
 	}
@@ -270,9 +270,9 @@ func (s *Server) handleReplaceContent(w http.ResponseWriter, r *http.Request) {
 		case files.ErrUnsupportedType, files.ErrSpoofedContent:
 			WriteError(w, r, http.StatusUnsupportedMediaType, "UNSUPPORTED_TYPE", err.Error())
 		case files.ErrQuotaExceeded:
-			WriteError(w, r, http.StatusConflict, "QUOTA_EXCEEDED", err.Error())
+			writeServiceError(w, r, err, "QUOTA_EXCEEDED")
 		default:
-			WriteError(w, r, http.StatusConflict, "REPLACE_CONFLICT", err.Error())
+			writeServiceError(w, r, err, "REPLACE_CONFLICT")
 		}
 		return
 	}
@@ -305,7 +305,7 @@ func (s *Server) handleSetListing(w http.ResponseWriter, r *http.Request) {
 		case files.ErrForbidden:
 			WriteError(w, r, http.StatusForbidden, "FORBIDDEN", "Only owner can modify listing")
 		default:
-			WriteError(w, r, http.StatusConflict, "LISTING_CONFLICT", err.Error())
+			writeServiceError(w, r, err, "LISTING_CONFLICT")
 		}
 		return
 	}
@@ -328,7 +328,7 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 		case files.ErrForbidden:
 			WriteError(w, r, http.StatusForbidden, "FORBIDDEN", "Download permission denied")
 		default:
-			WriteError(w, r, http.StatusInternalServerError, "DOWNLOAD_ERROR", err.Error())
+			writeServiceError(w, r, err, "DOWNLOAD_ERROR")
 		}
 		return
 	}

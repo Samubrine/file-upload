@@ -68,7 +68,7 @@ func (s *Server) handlePutGrant(w http.ResponseWriter, r *http.Request) {
 		case storage.ErrConflict:
 			WriteError(w, r, http.StatusConflict, "CONFLICT", "File revision conflict")
 		default:
-			WriteError(w, r, http.StatusConflict, "GRANT_ERROR", err.Error())
+			writeServiceError(w, r, err, "GRANT_ERROR")
 		}
 		return
 	}
@@ -106,7 +106,7 @@ func (s *Server) handleDeleteGrant(w http.ResponseWriter, r *http.Request) {
 		case storage.ErrConflict:
 			WriteError(w, r, http.StatusConflict, "CONFLICT", "File revision conflict")
 		default:
-			WriteError(w, r, http.StatusConflict, "GRANT_ERROR", err.Error())
+			writeServiceError(w, r, err, "GRANT_ERROR")
 		}
 		return
 	}

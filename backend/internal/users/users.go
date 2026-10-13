@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"ciphervault/internal/apperr"
 	"ciphervault/internal/auth"
 	"ciphervault/internal/crypto"
 	"ciphervault/internal/storage"
@@ -84,12 +85,12 @@ func ValidateBirthday(b *string) error {
 	}
 	t, err := time.Parse("2006-01-02", *b)
 	if err != nil {
-		return errors.New("birthday must be YYYY-MM-DD")
+		return apperr.Validation("birthday must be YYYY-MM-DD")
 	}
 	today := time.Now().UTC().Format("2006-01-02")
 	todayTime, _ := time.Parse("2006-01-02", today)
 	if t.After(todayTime) {
-		return errors.New("birthday cannot be in the future")
+		return apperr.Validation("birthday cannot be in the future")
 	}
 	return nil
 }
@@ -133,13 +134,13 @@ func (s *Service) Register(c context.Context, input RegisterInput) (*storage.Use
 		return nil, nil, "", "", ErrNoticeRequired
 	}
 	if len(input.FullName) == 0 || len(input.FullName) > 100 {
-		return nil, nil, "", "", errors.New("full name must be between 1 and 100 characters")
+		return nil, nil, "", "", apperr.Validation("full name must be between 1 and 100 characters")
 	}
 	if !auth.ValidateUsername(input.Username) {
-		return nil, nil, "", "", errors.New("username must be 3-32 characters, lowercase alphanumeric or underscore")
+		return nil, nil, "", "", apperr.Validation("username must be 3-32 characters, lowercase alphanumeric or underscore")
 	}
 	if !auth.ValidateEmail(input.Email) {
-		return nil, nil, "", "", errors.New("invalid email address")
+		return nil, nil, "", "", apperr.Validation("invalid email address")
 	}
 	if err := ValidateBirthday(input.Birthday); err != nil {
 		return nil, nil, "", "", err
@@ -356,10 +357,10 @@ func (s *Service) decryptProfile(tx *sql.Tx, u *storage.UserRow) (*Profile, erro
 
 func (s *Service) UpdateProfile(c context.Context, userID string, expectedRev int64, input ProfileUpdateInput) (*Profile, int64, error) {
 	if len(input.FullName) == 0 || len(input.FullName) > 100 {
-		return nil, 0, errors.New("full name must be between 1 and 100 characters")
+		return nil, 0, apperr.Validation("full name must be between 1 and 100 characters")
 	}
 	if !auth.ValidateEmail(input.Email) {
-		return nil, 0, errors.New("invalid email address")
+		return nil, 0, apperr.Validation("invalid email address")
 	}
 	if err := ValidateBirthday(input.Birthday); err != nil {
 		return nil, 0, err

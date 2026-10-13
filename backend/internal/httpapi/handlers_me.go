@@ -58,7 +58,7 @@ func (s *Server) handlePatchMe(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusForbidden, "PASSWORD_MISMATCH", "Incorrect current password")
 			return
 		}
-		WriteError(w, r, http.StatusConflict, "UPDATE_CONFLICT", err.Error())
+		writeServiceError(w, r, err, "UPDATE_CONFLICT")
 		return
 	}
 
@@ -85,7 +85,7 @@ func (s *Server) handleDeleteMe(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusForbidden, "PASSWORD_MISMATCH", "Incorrect current password")
 			return
 		}
-		WriteError(w, r, http.StatusInternalServerError, "DELETE_ERROR", err.Error())
+		writeServiceError(w, r, err, "DELETE_ERROR")
 		return
 	}
 
@@ -115,7 +115,7 @@ func (s *Server) handlePutPassword(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_PASSWORD", err.Error())
 			return
 		}
-		WriteError(w, r, http.StatusConflict, "PASSWORD_CHANGE_CONFLICT", err.Error())
+		writeServiceError(w, r, err, "PASSWORD_CHANGE_CONFLICT")
 		return
 	}
 

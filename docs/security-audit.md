@@ -14,7 +14,7 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V8 | Medium | httpapi/handlers_files.go upload/replace | httpapi/sec_v08_upload_test.go | fix(sec): V8 stream uploads with a 52 MiB cap, one file part, no extra fields | fixed | ParseMultipartForm spills to disk, body not bounded (gosec G120) |
 | V9 | Medium | files/validation.go | files/sec_v09_allowlist_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Allowlist accepts SVG/archives/plaintext/macro formats; no-op MP4 and short-DOC checks |
 | V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Filenames not checked for control characters or length |
-| V11 | Medium | 38 err.Error() sites in httpapi | httpapi/sec_v11_errors_test.go | — | open | Internal error text leaks to clients |
+| V11 | Medium | 38 err.Error() sites in httpapi | httpapi/sec_v11_errors_test.go | fix(sec): V11 map service errors to fixed messages and never send storage or crypto text | fixed | Internal error text leaks to clients |
 | V12 | Medium | users/users.go Login/Register | users/sec_v12_enum_test.go | — | open | Username enumeration via timing and conflict messages |
 | V13 | Medium | crypto/envelope.go Open | crypto/sec_v13_header_test.go | — | open | Envelope header accepts unknown/duplicate fields |
 | V14 | Low | httpapi/handlers_me.go handleDeleteMe | httpapi/sec_v14_deleteme_test.go | — | open | DELETE /me ignores If-Match revision |
