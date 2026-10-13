@@ -2,12 +2,14 @@ package httpapi
 
 import (
 	"database/sql"
+	"errors"
 	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
 
 	"ciphervault/internal/auth"
+	"ciphervault/internal/storage"
 	"ciphervault/internal/users"
 )
 
@@ -56,6 +58,11 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		}
 		if err == users.ErrPasswordComplexity {
 			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_PASSWORD", err.Error())
+			return
+		}
+		if errors.Is(err, storage.ErrConflict) {
+			// One fixed answer for a taken username or email, so the reply does not say which one.
+			WriteError(w, r, http.StatusConflict, "REGISTRATION_CONFLICT", "username or email unavailable")
 			return
 		}
 		writeServiceError(w, r, err, "REGISTRATION_CONFLICT")

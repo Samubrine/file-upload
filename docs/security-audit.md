@@ -9,13 +9,13 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V3 | High | httpapi/middleware.go | httpapi/sec_v03_origin_test.go | fix(sec): V3 reject cross-site mutating requests via Origin/Sec-Fetch-Site | fixed | No Origin/Sec-Fetch-Site check (login CSRF, cross-site mutations) |
 | V4 | High | auth/password.go, users/users.go | httpapi/sec_v04_bcrypt_test.go | fix(sec): V4 reject passwords over 72 bytes instead of truncating for bcrypt | fixed | bcrypt truncates at 72 bytes; different long passwords authenticate |
 | V5 | High | sharing/sharing.go GetGrants | httpapi/sec_v05_grants_test.go | fix(sec): V5 return recipient usernames in grant list instead of user IDs | fixed | Grant list returns internal user UUID instead of username |
-| V6 | High | httpapi (login/register/grant) | httpapi/sec_v06_ratelimit_test.go | fix(sec): V6 rate limit login, registration and grant changes with Retry-After | fixed | No rate limiting; spec requires 429 |
+| V6 | High | httpapi (login/register/grant) | httpapi/sec_v06_ratelimit_test.go | test(sec): pin limiter clock in V6 tests so race-mode bcrypt time cannot refill buckets | fixed | No rate limiting; spec requires 429 |
 | V7 | Medium | 8 JSON decode sites in httpapi | httpapi/sec_v07_json_test.go | fix(sec): V7 cap JSON bodies at 64 KiB and reject unknown or trailing fields | fixed | Unbounded JSON bodies, unknown fields accepted |
 | V8 | Medium | httpapi/handlers_files.go upload/replace | httpapi/sec_v08_upload_test.go | fix(sec): V8 stream uploads with a 52 MiB cap, one file part, no extra fields | fixed | ParseMultipartForm spills to disk, body not bounded (gosec G120) |
 | V9 | Medium | files/validation.go | files/sec_v09_allowlist_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Allowlist accepts SVG/archives/plaintext/macro formats; no-op MP4 and short-DOC checks |
 | V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Filenames not checked for control characters or length |
 | V11 | Medium | 38 err.Error() sites in httpapi | httpapi/sec_v11_errors_test.go | fix(sec): V11 map service errors to fixed messages and never send storage or crypto text | fixed | Internal error text leaks to clients |
-| V12 | Medium | users/users.go Login/Register | users/sec_v12_enum_test.go | — | open | Username enumeration via timing and conflict messages |
+| V12 | Medium | users/users.go Login/Register | users/sec_v12_enum_test.go | fix(sec): V12 equalize login timing and use one message for duplicate registration | fixed | Username enumeration via timing and conflict messages |
 | V13 | Medium | crypto/envelope.go Open | crypto/sec_v13_header_test.go | — | open | Envelope header accepts unknown/duplicate fields |
 | V14 | Low | httpapi/handlers_me.go handleDeleteMe | httpapi/sec_v14_deleteme_test.go | — | open | DELETE /me ignores If-Match revision |
 | V15 | Low | httpapi/handlers_auth.go cookies | httpapi/sec_v15_cookie_test.go | — | open | Cookie never Secure, never __Host- (gosec G124) |

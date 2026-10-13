@@ -4,13 +4,23 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 )
+
+// freezeLimiterClock stops the bucket clock. Bcrypt under the race detector can
+// take seconds per attempt, which would refill tokens mid-test and make the
+// counts depend on machine speed.
+func freezeLimiterClock(server *Server) {
+	frozen := time.Now()
+	server.limiter.now = func() time.Time { return frozen }
+}
 
 // V6: login, register and grant changes must be rate limited. Responses over
 // the limit use 429 with a Retry-After header.
 func TestV6LoginRateLimited(t *testing.T) {
 	server, db := setupTestServer(t)
 	defer db.Close()
+	freezeLimiterClock(server)
 
 	anon := &testClient{server: server}
 	bad := jsonBody(t, LoginInput{Username: "alice", Password: "WrongPassword123!"})
@@ -31,6 +41,7 @@ func TestV6LoginRateLimited(t *testing.T) {
 func TestV6RegisterRateLimitedPerIP(t *testing.T) {
 	server, db := setupTestServer(t)
 	defer db.Close()
+	freezeLimiterClock(server)
 
 	anon := &testClient{server: server}
 	h := map[string]string{"Content-Type": "application/json"}
@@ -53,6 +64,7 @@ func TestV6RegisterRateLimitedPerIP(t *testing.T) {
 func TestV6GrantChangesRateLimitedPerUser(t *testing.T) {
 	server, db := setupTestServer(t)
 	defer db.Close()
+	freezeLimiterClock(server)
 
 	alice := &testClient{server: server}
 	alice.register(t, "Alice", "alice", "alice@example.com", "SecretPassword123!")
@@ -69,3 +81,4 @@ func TestV6GrantChangesRateLimitedPerUser(t *testing.T) {
 		jsonBody(t, GrantSetInput{ViewMetadata: true}), "application/json", etag)
 	expectStatus(t, w, http.StatusTooManyRequests, "31st grant change in one minute")
 }
+

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"sync"
 
 	"ciphervault/internal/apperr"
 	"ciphervault/internal/auth"
@@ -30,6 +31,19 @@ const (
 	PhysicalQuotaBytes   = 2 * 1024 * 1024 * 1024  // 2 GiB
 	FileCountLimit       = 100
 )
+
+// errInvalidCredentials is the one message for an unknown user or a wrong password.
+var errInvalidCredentials = errors.New("invalid credentials")
+
+// timingDummyHash is a real bcrypt hash checked when the username does not exist,
+// so both failure paths cost the same time.
+var timingDummyHash = sync.OnceValue(func() string {
+	h, err := auth.HashPassword("timing-equalizer-password-unused")
+	if err != nil {
+		panic(err)
+	}
+	return h
+})
 
 type Profile struct {
 	FullName string  `json:"full_name"`
@@ -245,13 +259,14 @@ func (s *Service) Login(c context.Context, username, password string) (*storage.
 	err := s.db.WithTx(c, func(tx *sql.Tx) error {
 		u, err := s.db.GetUserByUsernameLookup(tx, lookup)
 		if err != nil {
-			return errors.New("invalid credentials")
+			_, _ = auth.VerifyPassword(password, timingDummyHash())
+			return errInvalidCredentials
 		}
 		uRow = u
 
 		match, err := auth.VerifyPassword(password, u.PasswordHash)
 		if err != nil || !match {
-			return errors.New("invalid credentials")
+			return errInvalidCredentials
 		}
 
 		prof, err := s.decryptProfile(tx, u)
