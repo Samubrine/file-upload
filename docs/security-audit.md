@@ -60,3 +60,5 @@ V9 and V10 share one commit (dcdf3b5) because the allowlist and the filename val
 - Development keys in data/dev-keys.json are for local use. Losing that file makes development data unrecoverable (ADR 013).
 - Only go1.26.9 was verified. The toolchain download came through a module proxy because the default proxy was unreachable from this machine.
 - The CFB and OFB modes are kept for the assignment comparison (see the staticcheck note above). gofmt -w was applied across backend/internal and backend/cmd; the whitespace-insensitive diff shows only import ordering and one signature spacing change.
+
+
