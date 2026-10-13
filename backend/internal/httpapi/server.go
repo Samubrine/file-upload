@@ -34,6 +34,7 @@ type Server struct {
 	staticDir      string
 	publicOrigin   string
 	uploadQueue    *UploadQueue
+	limiter        *rateLimiter
 	handler        http.Handler
 }
 
@@ -56,6 +57,7 @@ func NewServer(cfg ServerConfig) *Server {
 		staticDir:      cfg.StaticDir,
 		publicOrigin:   cfg.PublicOrigin,
 		uploadQueue:    NewUploadQueue(2), // 2-job queue for upload serialization
+		limiter:        newRateLimiter(),
 	}
 
 	s.setupRoutes()

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"ciphervault/internal/sharing"
 	"ciphervault/internal/storage"
@@ -37,6 +38,10 @@ func (s *Server) handleGetGrants(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handlePutGrant(w http.ResponseWriter, r *http.Request) {
 	session := GetSession(r)
+	if ok, wait := s.limiter.Allow("grant|"+session.UserID, 30, time.Minute); !ok {
+		writeRateLimited(w, r, wait)
+		return
+	}
 	fileID := r.PathValue("file_id")
 	username := r.PathValue("username")
 

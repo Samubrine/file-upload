@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"ciphervault/internal/auth"
@@ -38,6 +39,10 @@ func (s *Server) handleNotice(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
+	if ok, wait := s.limiter.Allow("register|"+clientIP(r), 5, time.Minute); !ok {
+		writeRateLimited(w, r, wait)
+		return
+	}
 	var input users.RegisterInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
@@ -74,6 +79,11 @@ func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	var input LoginInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+		return
+	}
+	loginKey := "login|" + clientIP(r) + "|" + strings.ToLower(strings.TrimSpace(input.Username))
+	if ok, wait := s.limiter.Allow(loginKey, 10, time.Minute); !ok {
+		writeRateLimited(w, r, wait)
 		return
 	}
 
