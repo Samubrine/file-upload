@@ -44,8 +44,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var input users.RegisterInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 
@@ -77,8 +76,7 @@ func (s *Server) handleRegister(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleLogin(w http.ResponseWriter, r *http.Request) {
 	var input LoginInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 	loginKey := "login|" + clientIP(r) + "|" + strings.ToLower(strings.TrimSpace(input.Username))

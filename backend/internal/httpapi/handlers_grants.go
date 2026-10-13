@@ -52,8 +52,7 @@ func (s *Server) handlePutGrant(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input GrantSetInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 

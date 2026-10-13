@@ -10,7 +10,7 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V4 | High | auth/password.go, users/users.go | httpapi/sec_v04_bcrypt_test.go | fix(sec): V4 reject passwords over 72 bytes instead of truncating for bcrypt | fixed | bcrypt truncates at 72 bytes; different long passwords authenticate |
 | V5 | High | sharing/sharing.go GetGrants | httpapi/sec_v05_grants_test.go | fix(sec): V5 return recipient usernames in grant list instead of user IDs | fixed | Grant list returns internal user UUID instead of username |
 | V6 | High | httpapi (login/register/grant) | httpapi/sec_v06_ratelimit_test.go | fix(sec): V6 rate limit login, registration and grant changes with Retry-After | fixed | No rate limiting; spec requires 429 |
-| V7 | Medium | 8 JSON decode sites in httpapi | httpapi/sec_v07_json_test.go | — | open | Unbounded JSON bodies, unknown fields accepted |
+| V7 | Medium | 8 JSON decode sites in httpapi | httpapi/sec_v07_json_test.go | fix(sec): V7 cap JSON bodies at 64 KiB and reject unknown or trailing fields | fixed | Unbounded JSON bodies, unknown fields accepted |
 | V8 | Medium | httpapi/handlers_files.go upload/replace | httpapi/sec_v08_upload_test.go | — | open | ParseMultipartForm spills to disk, body not bounded (gosec G120) |
 | V9 | Medium | files/validation.go | files/sec_v09_allowlist_test.go | — | open | Allowlist accepts SVG/archives/plaintext/macro formats; no-op MP4 and short-DOC checks |
 | V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | — | open | Filenames not checked for control characters or length |

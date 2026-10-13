@@ -48,8 +48,7 @@ func (s *Server) handlePatchMe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input users.ProfileUpdateInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 
@@ -77,8 +76,7 @@ func (s *Server) handleDeleteMe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input PasswordConfirmInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 
@@ -104,8 +102,7 @@ func (s *Server) handlePutPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input PasswordChangeInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 

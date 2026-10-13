@@ -199,8 +199,7 @@ func (s *Server) handleRenameFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input RenameInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 
@@ -314,8 +313,7 @@ func (s *Server) handleSetListing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var input ListingInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MALFORMED_INPUT", "Invalid JSON body")
+	if !decodeJSON(w, r, &input) {
 		return
 	}
 
