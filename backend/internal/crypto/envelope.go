@@ -234,7 +234,10 @@ func Open(ctx Context, keyProvider KeyProvider, envelope []byte) ([]byte, *OpenT
 	tag := envelope[len(envelope)-32:]
 
 	var header Header
-	if err := json.Unmarshal(headerJSON, &header); err != nil {
+	if err := parseStrictHeader(headerJSON, &header); err != nil {
+		return nil, nil, ErrIntegrityCheckFailed
+	}
+	if header.PlaintextBytes < 0 || header.ContentRevision < 1 {
 		return nil, nil, ErrIntegrityCheckFailed
 	}
 

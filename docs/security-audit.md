@@ -16,7 +16,7 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Filenames not checked for control characters or length |
 | V11 | Medium | 38 err.Error() sites in httpapi | httpapi/sec_v11_errors_test.go | fix(sec): V11 map service errors to fixed messages and never send storage or crypto text | fixed | Internal error text leaks to clients |
 | V12 | Medium | users/users.go Login/Register | users/sec_v12_enum_test.go | fix(sec): V12 equalize login timing and use one message for duplicate registration | fixed | Username enumeration via timing and conflict messages |
-| V13 | Medium | crypto/envelope.go Open | crypto/sec_v13_header_test.go | — | open | Envelope header accepts unknown/duplicate fields |
+| V13 | Medium | crypto/envelope.go Open | crypto/sec_v13_header_test.go | fix(sec): V13 refuse unknown, duplicate and trailing fields in envelope headers | fixed | Envelope header accepts unknown/duplicate fields |
 | V14 | Low | httpapi/handlers_me.go handleDeleteMe | httpapi/sec_v14_deleteme_test.go | — | open | DELETE /me ignores If-Match revision |
 | V15 | Low | httpapi/handlers_auth.go cookies | httpapi/sec_v15_cookie_test.go | — | open | Cookie never Secure, never __Host- (gosec G124) |
 | V16 | Low | httpapi/middleware.go | httpapi/sec_v16_csp_test.go | — | open | No Content-Security-Policy; downloads not sandboxed (gosec G705) |
