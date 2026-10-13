@@ -314,6 +314,19 @@ func (s *Service) GetProfile(c context.Context, userID string) (*Profile, int64,
 	return profile, rev, nil
 }
 
+// UsernameByID decrypts a user's profile inside tx and returns the username.
+func (s *Service) UsernameByID(tx *sql.Tx, userID string) (string, error) {
+	u, err := s.db.GetUserByID(tx, userID)
+	if err != nil {
+		return "", err
+	}
+	p, err := s.decryptProfile(tx, u)
+	if err != nil {
+		return "", err
+	}
+	return p.Username, nil
+}
+
 func (s *Service) decryptProfile(tx *sql.Tx, u *storage.UserRow) (*Profile, error) {
 	// Read default variant
 	variantRow, err := s.db.GetPayloadVariant(tx, u.ProfilePayloadID, crypto.DefaultVariant)

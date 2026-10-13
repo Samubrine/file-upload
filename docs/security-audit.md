@@ -8,7 +8,7 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V2 | High | httpapi/handlers_auth.go handleGetSession | httpapi/sec_v02_csrf_test.go | fix(sec): V2 issue fresh CSRF token on session restore | fixed | GET /auth/session echoes request CSRF header; reload leaves client without CSRF token |
 | V3 | High | httpapi/middleware.go | httpapi/sec_v03_origin_test.go | fix(sec): V3 reject cross-site mutating requests via Origin/Sec-Fetch-Site | fixed | No Origin/Sec-Fetch-Site check (login CSRF, cross-site mutations) |
 | V4 | High | auth/password.go, users/users.go | httpapi/sec_v04_bcrypt_test.go | fix(sec): V4 reject passwords over 72 bytes instead of truncating for bcrypt | fixed | bcrypt truncates at 72 bytes; different long passwords authenticate |
-| V5 | High | sharing/sharing.go GetGrants | httpapi/sec_v05_grants_test.go | — | open | Grant list returns internal user UUID instead of username |
+| V5 | High | sharing/sharing.go GetGrants | httpapi/sec_v05_grants_test.go | fix(sec): V5 return recipient usernames in grant list instead of user IDs | fixed | Grant list returns internal user UUID instead of username |
 | V6 | High | httpapi (login/register/grant) | httpapi/sec_v06_ratelimit_test.go | — | open | No rate limiting; spec requires 429 |
 | V7 | Medium | 8 JSON decode sites in httpapi | httpapi/sec_v07_json_test.go | — | open | Unbounded JSON bodies, unknown fields accepted |
 | V8 | Medium | httpapi/handlers_files.go upload/replace | httpapi/sec_v08_upload_test.go | — | open | ParseMultipartForm spills to disk, body not bounded (gosec G120) |

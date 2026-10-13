@@ -57,15 +57,20 @@ type GrantDTO struct {
 	Download          bool   `json:"download"`
 }
 
+// UsernameResolver returns the plaintext username for a user ID inside tx.
+type UsernameResolver func(tx *sql.Tx, userID string) (string, error)
+
 type Service struct {
 	db               *storage.DB
 	identityIndexKey []byte
+	resolveUsername  UsernameResolver
 }
 
-func NewService(db *storage.DB, identityIndexKey []byte) *Service {
+func NewService(db *storage.DB, identityIndexKey []byte, resolveUsername UsernameResolver) *Service {
 	return &Service{
 		db:               db,
 		identityIndexKey: identityIndexKey,
+		resolveUsername:  resolveUsername,
 	}
 }
 
@@ -86,21 +91,11 @@ func (s *Service) GetGrants(c context.Context, ownerID, fileID string) ([]GrantD
 			return err
 		}
 
-		// Decrypt/resolve recipient username for each grant
-		// In database, we can find recipient's user row and fetch profile
 		for _, g := range grants {
-			// Query user by recipient_id to find their username
-			// Since we want the recipient's username in the grant DTO:
-			var username string
-			// We can query user profile payload or decrypt it, but wait!
-			// Does users have username? The user's profile payload has the username!
-			// We can decrypt recipient's profile to get their username.
-			// Let's create a helper query or method.
-			u, err := s.db.GetUserByID(tx, g.RecipientID)
+			username, err := s.resolveUsername(tx, g.RecipientID)
 			if err != nil {
-				continue
+				return err
 			}
-			username = u.ID // fallback or lookup
 			dtoList = append(dtoList, GrantDTO{
 				RecipientUsername: username,
 				ViewMetadata:      g.ViewMetadata,

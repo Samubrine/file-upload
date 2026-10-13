@@ -200,7 +200,7 @@ func main() {
 	kp := crypto.NewMemoryKeyProvider(map[string][]byte{rootKeyID: rootKey})
 	uSvc := users.NewService(db, kp, rootKeyID, indexKey)
 	fSvc := files.NewService(db, kp, rootKeyID)
-	sSvc := sharing.NewService(db, indexKey)
+	sSvc := sharing.NewService(db, indexKey, uSvc.UsernameByID)
 
 	server := httpapi.NewServer(httpapi.ServerConfig{
 		DB:             db,

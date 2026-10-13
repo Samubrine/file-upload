@@ -57,7 +57,7 @@ func main() {
 	// Services
 	usersService := users.NewService(db, kp, activeKeyID, indexKey)
 	filesService := files.NewService(db, kp, activeKeyID)
-	sharingService := sharing.NewService(db, indexKey)
+	sharingService := sharing.NewService(db, indexKey, usersService.UsernameByID)
 
 	// Check if frontend directory exists
 	actualStaticDir := *staticDir

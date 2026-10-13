@@ -42,7 +42,7 @@ func setupTestServer(t *testing.T) (*Server, *storage.DB) {
 	kp := crypto.NewMemoryKeyProvider(map[string][]byte{rootKeyID: rootKey})
 	uSvc := users.NewService(db, kp, rootKeyID, indexKey)
 	fSvc := files.NewService(db, kp, rootKeyID)
-	sSvc := sharing.NewService(db, indexKey)
+	sSvc := sharing.NewService(db, indexKey, uSvc.UsernameByID)
 
 	server := NewServer(ServerConfig{
 		DB:             db,
