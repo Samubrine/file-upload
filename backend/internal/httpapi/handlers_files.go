@@ -76,6 +76,8 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusBadRequest, "EMPTY_FILE", err.Error())
 		case files.ErrFileTooLarge:
 			WriteError(w, r, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", err.Error())
+		case files.ErrInvalidFilename:
+			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_FILENAME", "Filename contains control characters, starts with a dot, or is too long")
 		case files.ErrUnsupportedType, files.ErrSpoofedContent:
 			WriteError(w, r, http.StatusUnsupportedMediaType, "UNSUPPORTED_TYPE", err.Error())
 		case files.ErrInvalidCategory:
@@ -196,6 +198,8 @@ func (s *Server) handleRenameFile(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusNotFound, "NOT_FOUND", "File not found")
 		case files.ErrForbidden:
 			WriteError(w, r, http.StatusForbidden, "FORBIDDEN", "Only owner can rename file")
+		case files.ErrInvalidFilename:
+			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_FILENAME", "Filename contains control characters, starts with a dot, or is too long")
 		case files.ErrExtensionChange:
 			WriteError(w, r, http.StatusUnprocessableEntity, "EXTENSION_CHANGE", err.Error())
 		default:
@@ -261,6 +265,8 @@ func (s *Server) handleReplaceContent(w http.ResponseWriter, r *http.Request) {
 			WriteError(w, r, http.StatusBadRequest, "EMPTY_FILE", err.Error())
 		case files.ErrFileTooLarge:
 			WriteError(w, r, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", err.Error())
+		case files.ErrInvalidFilename:
+			WriteError(w, r, http.StatusUnprocessableEntity, "INVALID_FILENAME", "Filename contains control characters, starts with a dot, or is too long")
 		case files.ErrUnsupportedType, files.ErrSpoofedContent:
 			WriteError(w, r, http.StatusUnsupportedMediaType, "UNSUPPORTED_TYPE", err.Error())
 		case files.ErrQuotaExceeded:

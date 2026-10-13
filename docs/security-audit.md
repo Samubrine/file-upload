@@ -12,8 +12,8 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V6 | High | httpapi (login/register/grant) | httpapi/sec_v06_ratelimit_test.go | fix(sec): V6 rate limit login, registration and grant changes with Retry-After | fixed | No rate limiting; spec requires 429 |
 | V7 | Medium | 8 JSON decode sites in httpapi | httpapi/sec_v07_json_test.go | fix(sec): V7 cap JSON bodies at 64 KiB and reject unknown or trailing fields | fixed | Unbounded JSON bodies, unknown fields accepted |
 | V8 | Medium | httpapi/handlers_files.go upload/replace | httpapi/sec_v08_upload_test.go | fix(sec): V8 stream uploads with a 52 MiB cap, one file part, no extra fields | fixed | ParseMultipartForm spills to disk, body not bounded (gosec G120) |
-| V9 | Medium | files/validation.go | files/sec_v09_allowlist_test.go | — | open | Allowlist accepts SVG/archives/plaintext/macro formats; no-op MP4 and short-DOC checks |
-| V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | — | open | Filenames not checked for control characters or length |
+| V9 | Medium | files/validation.go | files/sec_v09_allowlist_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Allowlist accepts SVG/archives/plaintext/macro formats; no-op MP4 and short-DOC checks |
+| V10 | Medium | files/files.go upload/rename | files/sec_v10_filename_test.go | fix(sec): V9 V10 restrict uploads to verifiable types and validate filenames | fixed | Filenames not checked for control characters or length |
 | V11 | Medium | 38 err.Error() sites in httpapi | httpapi/sec_v11_errors_test.go | — | open | Internal error text leaks to clients |
 | V12 | Medium | users/users.go Login/Register | users/sec_v12_enum_test.go | — | open | Username enumeration via timing and conflict messages |
 | V13 | Medium | crypto/envelope.go Open | crypto/sec_v13_header_test.go | — | open | Envelope header accepts unknown/duplicate fields |

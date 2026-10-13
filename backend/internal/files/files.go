@@ -173,6 +173,10 @@ func (s *Service) Upload(c context.Context, ownerID, filename string, content []
 	}
 
 	cleanFilename := filepath.Base(filename)
+	cleanFilename, err = validateFilename(filename)
+	if err != nil {
+		return nil, err
+	}
 	meta := FileMetadata{
 		Filename:  cleanFilename,
 		Extension: typeInfo.Extension,
@@ -371,17 +375,16 @@ func (s *Service) Download(c context.Context, callerID, fileID, variantID string
 
 // Rename updates display filename while preserving extension and content.
 func (s *Service) Rename(c context.Context, ownerID, fileID, newFilename string, expectedRev int64) (*OwnerFileDTO, error) {
-	cleanName := filepath.Base(newFilename)
-	cleanName = strings.TrimSpace(cleanName)
-	if cleanName == "" {
-		return nil, errors.New("empty filename")
+	cleanName, err := validateFilename(newFilename)
+	if err != nil {
+		return nil, err
 	}
 
 	var dto *OwnerFileDTO
 	now := time.Now().UTC().Format(time.RFC3339)
 	newRev := expectedRev + 1
 
-	err := s.db.WithTx(c, func(tx *sql.Tx) error {
+	err = s.db.WithTx(c, func(tx *sql.Tx) error {
 		f, err := s.db.GetFileByID(tx, fileID)
 		if err != nil {
 			return ErrFileNotFound
