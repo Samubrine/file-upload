@@ -4,7 +4,7 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 
 | ID | Severity | Location | Proof test | Fix commit | Status | Finding |
 |---|---|---|---|---|---|---|
-| V1 | Critical | backend/cmd/server/main.go | cmd/server/devkeys_test.go | — | open | Hardcoded dev root/index keys committed in source |
+| V1 | Critical | backend/cmd/server/main.go | cmd/server/devkeys_test.go | fix(sec): V1 generate local dev keys instead of hardcoded constants | fixed | Hardcoded dev root/index keys committed in source |
 | V2 | High | httpapi/handlers_auth.go handleGetSession | httpapi/sec_v02_csrf_test.go | — | open | GET /auth/session echoes request CSRF header; reload leaves client without CSRF token |
 | V3 | High | httpapi/middleware.go | httpapi/sec_v03_origin_test.go | — | open | No Origin/Sec-Fetch-Site check (login CSRF, cross-site mutations) |
 | V4 | High | auth/password.go, users/users.go | httpapi/sec_v04_bcrypt_test.go | — | open | bcrypt truncates at 72 bytes; different long passwords authenticate |

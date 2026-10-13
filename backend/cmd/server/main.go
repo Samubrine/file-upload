@@ -2,15 +2,13 @@ package main
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -37,13 +35,11 @@ func main() {
 		activeKeyID = "root-1"
 	}
 
-	rootKeyEnv := os.Getenv("CRYPTO_ROOT_KEY_" + activeKeyID)
-	rootKey := normalizeKey32(rootKeyEnv, "ciphervault_dev_root_key_32_byte")
-	log.Printf("Loaded 32-byte root key for active id: %s", activeKeyID)
-
-	indexKeyEnv := os.Getenv("IDENTITY_INDEX_KEY")
-	indexKey := normalizeKey32(indexKeyEnv, "ciphervault_dev_index_key_32_byt")
-	log.Printf("Loaded 32-byte identity index key")
+	rootKey, indexKey, err := loadKeys(filepath.Dir(*dbPath), activeKeyID, os.Getenv)
+	if err != nil {
+		log.Fatalf("Failed to load encryption keys: %v", err)
+	}
+	log.Printf("Loaded 32-byte root key (id %q) and identity index key", activeKeyID)
 
 	kp := crypto.NewMemoryKeyProvider(map[string][]byte{
 		activeKeyID: rootKey,
@@ -106,20 +102,5 @@ func main() {
 		log.Printf("Shutdown error: %v", err)
 	}
 	log.Println("Server stopped")
-}
-
-func normalizeKey32(raw string, defaultVal string) []byte {
-	raw = strings.TrimSpace(raw)
-	if raw == "" {
-		raw = defaultVal
-	}
-	if b, err := hex.DecodeString(raw); err == nil && len(b) == 32 {
-		return b
-	}
-	if len(raw) == 32 {
-		return []byte(raw)
-	}
-	h := sha256.Sum256([]byte(raw))
-	return h[:]
 }
 
