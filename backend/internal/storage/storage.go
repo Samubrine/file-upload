@@ -388,6 +388,22 @@ func (db *DB) DeleteSession(tx *sql.Tx, tokenHash []byte) error {
 	return err
 }
 
+// UpdateSessionCSRF replaces the stored CSRF token hash for a session.
+func (db *DB) UpdateSessionCSRF(tx *sql.Tx, tokenHash, csrfHash []byte) error {
+	res, err := tx.Exec("UPDATE sessions SET csrf_token_hash = ? WHERE token_hash = ?", csrfHash, tokenHash)
+	if err != nil {
+		return err
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
 func (db *DB) DeleteOtherSessions(tx *sql.Tx, userID string, currentTokenHash []byte) error {
 	_, err := tx.Exec("DELETE FROM sessions WHERE user_id = ? AND token_hash != ?", userID, currentTokenHash)
 	return err

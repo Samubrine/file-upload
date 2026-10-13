@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"ciphervault/internal/auth"
 	"ciphervault/internal/users"
 )
 
@@ -107,12 +108,23 @@ func (s *Server) handleGetSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// We cannot reverse CSRFTokenHash, so we check if client provided current or pass empty/dummy or session CSRF
-	// The client gets the CSRF token from Login/Register responses and stores it in memory.
-	// In GET /auth/session, we return the session information.
+	// Only the hash of the CSRF token is stored, so a reloaded client cannot be
+	// given its old token back. Issue a fresh token bound to this session.
+	rawCSRF, csrfHash, err := auth.GenerateRandomToken()
+	if err != nil {
+		WriteError(w, r, http.StatusInternalServerError, "INTERNAL_ERROR", "Failed to restore session")
+		return
+	}
+	if err := s.db.WithTx(r.Context(), func(tx *sql.Tx) error {
+		return s.db.UpdateSessionCSRF(tx, session.TokenHash, csrfHash)
+	}); err != nil {
+		WriteError(w, r, http.StatusUnauthorized, "UNAUTHORIZED", "Invalid or expired session")
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_ = json.NewEncoder(w).Encode(SessionResponse{
-		CSRFToken: r.Header.Get("X-CSRF-Token"), // echo or current
+		CSRFToken: rawCSRF,
 		ExpiresAt: session.ExpiresAt,
 		User:      profile,
 	})
