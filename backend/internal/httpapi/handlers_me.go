@@ -69,7 +69,7 @@ func (s *Server) handlePatchMe(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleDeleteMe(w http.ResponseWriter, r *http.Request) {
 	session := GetSession(r)
-	_, err := ParseIfMatch(r.Header.Get("If-Match"))
+	expectedRev, err := ParseIfMatch(r.Header.Get("If-Match"))
 	if err != nil {
 		WriteError(w, r, http.StatusBadRequest, "INVALID_IF_MATCH", err.Error())
 		return
@@ -80,7 +80,7 @@ func (s *Server) handleDeleteMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.usersService.DeleteAccount(r.Context(), session.UserID, input.CurrentPassword); err != nil {
+	if err := s.usersService.DeleteAccount(r.Context(), session.UserID, expectedRev, input.CurrentPassword); err != nil {
 		if err == users.ErrPasswordMismatch {
 			WriteError(w, r, http.StatusForbidden, "PASSWORD_MISMATCH", "Incorrect current password")
 			return

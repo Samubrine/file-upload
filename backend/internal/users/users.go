@@ -483,11 +483,14 @@ func (s *Service) UpdatePassword(c context.Context, userID string, expectedRev i
 	})
 }
 
-func (s *Service) DeleteAccount(c context.Context, userID string, currentPassword string) error {
+func (s *Service) DeleteAccount(c context.Context, userID string, expectedRev int64, currentPassword string) error {
 	return s.db.WithTx(c, func(tx *sql.Tx) error {
 		u, err := s.db.GetUserByID(tx, userID)
 		if err != nil {
 			return err
+		}
+		if u.Revision != expectedRev {
+			return storage.ErrConflict
 		}
 		match, err := auth.VerifyPassword(currentPassword, u.PasswordHash)
 		if err != nil || !match {
