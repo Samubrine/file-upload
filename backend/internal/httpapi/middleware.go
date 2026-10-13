@@ -59,6 +59,36 @@ func SecurityHeadersMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// OriginGuard rejects state-changing requests that a browser marks as coming
+// from another site. Requests without Origin (CLI tools, tests) are allowed
+// unless Sec-Fetch-Site says cross-site. Same origin means the configured
+// public origin or the scheme+Host the request was addressed to.
+func OriginGuard(publicOrigin string, next http.Handler) http.Handler {
+	publicOrigin = strings.TrimRight(publicOrigin, "/")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet, http.MethodHead, http.MethodOptions:
+			next.ServeHTTP(w, r)
+			return
+		}
+		if r.Header.Get("Sec-Fetch-Site") == "cross-site" {
+			WriteError(w, r, http.StatusForbidden, "ORIGIN_INVALID", "Cross-site request refused")
+			return
+		}
+		if origin := r.Header.Get("Origin"); origin != "" {
+			scheme := "http"
+			if r.TLS != nil {
+				scheme = "https"
+			}
+			if origin != publicOrigin && origin != scheme+"://"+r.Host {
+				WriteError(w, r, http.StatusForbidden, "ORIGIN_INVALID", "Cross-site request refused")
+				return
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 type SessionAuthMiddleware struct {
 	db         *storage.DB
 	cookieName string

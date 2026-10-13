@@ -20,6 +20,7 @@ type ServerConfig struct {
 	SecureCookies  bool
 	BenchmarkMode  bool
 	StaticDir      string
+	PublicOrigin   string
 }
 
 type Server struct {
@@ -31,6 +32,7 @@ type Server struct {
 	secureCookies  bool
 	benchmarkMode  bool
 	staticDir      string
+	publicOrigin   string
 	uploadQueue    *UploadQueue
 	handler        http.Handler
 }
@@ -38,6 +40,9 @@ type Server struct {
 func NewServer(cfg ServerConfig) *Server {
 	if cfg.CookieName == "" {
 		cfg.CookieName = "ciphervault_session"
+	}
+	if cfg.PublicOrigin == "" {
+		cfg.PublicOrigin = "http://localhost:8080"
 	}
 
 	s := &Server{
@@ -49,6 +54,7 @@ func NewServer(cfg ServerConfig) *Server {
 		secureCookies:  cfg.SecureCookies,
 		benchmarkMode:  cfg.BenchmarkMode,
 		staticDir:      cfg.StaticDir,
+		publicOrigin:   cfg.PublicOrigin,
 		uploadQueue:    NewUploadQueue(2), // 2-job queue for upload serialization
 	}
 
@@ -115,8 +121,8 @@ func (s *Server) setupRoutes() {
 		})
 	}
 
-	// Chain global middleware: RequestID -> SecurityHeaders -> Router
-	s.handler = RequestIDMiddleware(SecurityHeadersMiddleware(mux))
+	// Chain global middleware: RequestID -> SecurityHeaders -> OriginGuard -> Router
+	s.handler = RequestIDMiddleware(SecurityHeadersMiddleware(OriginGuard(s.publicOrigin, mux)))
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

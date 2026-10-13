@@ -25,6 +25,7 @@ func main() {
 	dbPath := flag.String("db", "data/ciphervault.db", "SQLite database file path")
 	staticDir := flag.String("static", "frontend/dist", "Path to static frontend dist directory")
 	benchmarkMode := flag.Bool("benchmark", false, "Enable Server-Timing metrics on download")
+	publicOrigin := flag.String("public-origin", "http://localhost:8080", "Origin browsers use to reach this server (for cross-site request checks)")
 	flag.Parse()
 
 	log.Printf("Starting CipherVault server on port %d...", *port)
@@ -74,6 +75,7 @@ func main() {
 		SecureCookies:  false, // dev default
 		BenchmarkMode:  *benchmarkMode,
 		StaticDir:      actualStaticDir,
+		PublicOrigin:   *publicOrigin,
 	})
 
 	httpServer := &http.Server{
