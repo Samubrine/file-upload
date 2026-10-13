@@ -3,7 +3,6 @@ package httpapi
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -64,26 +63,13 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 	session := GetSession(r)
 
 	// Bounded reading in memory: max 55 MiB (video max 50 MiB + multipart overhead)
-	if err := r.ParseMultipartForm(55 * 1024 * 1024); err != nil {
-		WriteError(w, r, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", "Upload body too large")
+	filename, fileBytes, category, ue := readSingleFile(w, r)
+	if ue != nil {
+		WriteError(w, r, ue.status, ue.code, ue.msg)
 		return
 	}
 
-	file, header, err := r.FormFile("file")
-	if err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MISSING_FILE", "Missing 'file' field in multipart form")
-		return
-	}
-	defer file.Close()
-
-	category := r.FormValue("category")
-	fileBytes, err := io.ReadAll(file)
-	if err != nil {
-		WriteError(w, r, http.StatusInternalServerError, "READ_ERROR", "Failed to read uploaded file")
-		return
-	}
-
-	dto, err := s.filesService.Upload(r.Context(), session.UserID, header.Filename, fileBytes, category)
+	dto, err := s.filesService.Upload(r.Context(), session.UserID, filename, fileBytes, category)
 	if err != nil {
 		switch err {
 		case files.ErrEmptyFile:
@@ -258,21 +244,9 @@ func (s *Server) handleReplaceContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := r.ParseMultipartForm(55 * 1024 * 1024); err != nil {
-		WriteError(w, r, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", "Upload body too large")
-		return
-	}
-
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		WriteError(w, r, http.StatusBadRequest, "MISSING_FILE", "Missing 'file' field in multipart form")
-		return
-	}
-	defer file.Close()
-
-	fileBytes, err := io.ReadAll(file)
-	if err != nil {
-		WriteError(w, r, http.StatusInternalServerError, "READ_ERROR", "Failed to read replacement file")
+	_, fileBytes, _, ue := readSingleFile(w, r)
+	if ue != nil {
+		WriteError(w, r, ue.status, ue.code, ue.msg)
 		return
 	}
 
