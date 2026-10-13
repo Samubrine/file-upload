@@ -2822,14 +2822,6 @@
             "schema": {
               "type": "string",
               "enum": [
-                "aes-128-cbc",
-                "aes-128-cfb128",
-                "aes-128-ofb",
-                "aes-128-ctr",
-                "aes-192-cbc",
-                "aes-192-cfb128",
-                "aes-192-ofb",
-                "aes-192-ctr",
                 "aes-256-cbc",
                 "aes-256-cfb128",
                 "aes-256-ofb",
@@ -3112,14 +3104,6 @@
             "items": {
               "type": "string",
               "enum": [
-                "aes-128-cbc",
-                "aes-128-cfb128",
-                "aes-128-ofb",
-                "aes-128-ctr",
-                "aes-192-cbc",
-                "aes-192-cfb128",
-                "aes-192-ofb",
-                "aes-192-ctr",
                 "aes-256-cbc",
                 "aes-256-cfb128",
                 "aes-256-ofb",
@@ -3128,8 +3112,8 @@
                 "rc4-256"
               ]
             },
-            "minItems": 14,
-            "maxItems": 14,
+            "minItems": 6,
+            "maxItems": 6,
             "uniqueItems": true
           }
         },
@@ -3178,14 +3162,6 @@
             "items": {
               "type": "string",
               "enum": [
-                "aes-128-cbc",
-                "aes-128-cfb128",
-                "aes-128-ofb",
-                "aes-128-ctr",
-                "aes-192-cbc",
-                "aes-192-cfb128",
-                "aes-192-ofb",
-                "aes-192-ctr",
                 "aes-256-cbc",
                 "aes-256-cfb128",
                 "aes-256-ofb",
@@ -3194,8 +3170,8 @@
                 "rc4-256"
               ]
             },
-            "minItems": 14,
-            "maxItems": 14,
+            "minItems": 6,
+            "maxItems": 6,
             "uniqueItems": true
           },
           "listed": {
@@ -3391,14 +3367,6 @@
           "default": {
             "type": "string",
             "enum": [
-              "aes-128-cbc",
-              "aes-128-cfb128",
-              "aes-128-ofb",
-              "aes-128-ctr",
-              "aes-192-cbc",
-              "aes-192-cfb128",
-              "aes-192-ofb",
-              "aes-192-ctr",
               "aes-256-cbc",
               "aes-256-cfb128",
               "aes-256-ofb",
@@ -3412,14 +3380,6 @@
             "items": {
               "type": "string",
               "enum": [
-                "aes-128-cbc",
-                "aes-128-cfb128",
-                "aes-128-ofb",
-                "aes-128-ctr",
-                "aes-192-cbc",
-                "aes-192-cfb128",
-                "aes-192-ofb",
-                "aes-192-ctr",
                 "aes-256-cbc",
                 "aes-256-cfb128",
                 "aes-256-ofb",
@@ -3428,8 +3388,8 @@
                 "rc4-256"
               ]
             },
-            "minItems": 14,
-            "maxItems": 14,
+            "minItems": 6,
+            "maxItems": 6,
             "uniqueItems": true
           }
         },

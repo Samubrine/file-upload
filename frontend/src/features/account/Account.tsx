@@ -145,7 +145,7 @@ export const Account: React.FC = () => {
       <div style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text)' }}>Account & Storage Quota</h2>
         <p style={{ fontSize: '14px', color: 'var(--color-secondary-text)', marginTop: '4px' }}>
-          Personal identity records and storage quotas. All profile fields are encrypted at rest across 14 independent variants.
+          Personal identity records and storage quotas. All profile fields are encrypted at rest across 6 independent variants.
         </p>
       </div>
 
@@ -222,7 +222,7 @@ export const Account: React.FC = () => {
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                  <span>Physical Storage (14 Replicas + Framing)</span>
+                  <span>Physical Storage (6 Replicas + Framing)</span>
                   <span style={{ fontWeight: 600 }}>
                     {formatBytes(quota.physical_used_bytes)} / {formatBytes(quota.physical_limit_bytes)} ({physicalPct.toFixed(1)}%)
                   </span>
@@ -245,7 +245,7 @@ export const Account: React.FC = () => {
               </div>
 
               <div style={{ marginTop: '8px', padding: '10px 12px', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '12px', color: 'var(--color-secondary-text)' }}>
-                ℹ️ Every uploaded file automatically provisions 14 independent cryptographic copies with unique random salts, IVs, and HMAC-SHA256 integrity tags.
+                ℹ️ Every uploaded file automatically provisions 6 independent cryptographic copies with unique random salts, IVs, and HMAC-SHA256 integrity tags.
               </div>
             </div>
           )}

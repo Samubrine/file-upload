@@ -16,7 +16,7 @@ export const Layout: React.FC<LayoutProps> = ({ currentTab, onTabChange, childre
     { id: 'home', label: 'Public Catalog', icon: '🌐' },
     { id: 'files', label: 'My Vault', icon: '📁' },
     { id: 'shared', label: 'Shared Files', icon: '👥' },
-    { id: 'benchmarks', label: '14-Cipher Benchmark', icon: '📊' },
+    { id: 'benchmarks', label: '6-Cipher Benchmark', icon: '📊' },
     { id: 'account', label: 'Account & Quota', icon: '👤' },
   ];
 

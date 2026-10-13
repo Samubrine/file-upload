@@ -356,7 +356,7 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Server-Timing header if benchmark mode enabled
-	if s.benchmarkMode && timings != nil {
+	if (s.benchmarkMode || r.URL.Query().Get("benchmark") == "1") && timings != nil {
 		serverTiming := fmt.Sprintf("db;dur=%.3f, kdf;dur=%.3f, mac;dur=%.3f, decrypt;dur=%.3f, total;dur=%.3f",
 			float64(timings.DBReadDuration.Microseconds())/1000.0,
 			float64(timings.KDFDuration.Microseconds())/1000.0,
@@ -365,6 +365,7 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 			float64(timings.OpenTotalDuration.Microseconds())/1000.0,
 		)
 		w.Header().Set("Server-Timing", serverTiming)
+		w.Header().Set("Timing-Allow-Origin", "*")
 	}
 
 	// Attachment disposition

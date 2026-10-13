@@ -26,8 +26,6 @@ func TestStorageLifecycle(t *testing.T) {
 
 	var variants []PayloadVariantRow
 	for _, vID := range []string{
-		"aes-128-cbc", "aes-128-cfb128", "aes-128-ofb", "aes-128-ctr",
-		"aes-192-cbc", "aes-192-cfb128", "aes-192-ofb", "aes-192-ctr",
 		"aes-256-cbc", "aes-256-cfb128", "aes-256-ofb", "aes-256-ctr",
 		"des-cbc", "rc4-256",
 	} {

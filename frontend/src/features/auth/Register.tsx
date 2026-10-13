@@ -76,7 +76,7 @@ export const Register: React.FC<{ onSwitchToLogin: () => void }> = ({ onSwitchTo
           <div style={{ fontSize: '32px', marginBottom: '8px' }}>🔐</div>
           <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-text)' }}>Create Account</h1>
           <p style={{ fontSize: '14px', color: 'var(--color-secondary-text)', marginTop: '4px' }}>
-            All user data is encrypted across 14 cryptographic variants.
+            All user data is encrypted across 6 cryptographic variants.
           </p>
         </div>
 

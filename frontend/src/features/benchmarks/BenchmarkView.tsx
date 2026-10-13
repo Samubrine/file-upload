@@ -20,16 +20,6 @@ interface BenchmarkItem {
 }
 
 const variantMeta: Record<string, { keyBits: number; blockSize: string; mode: string; padded: boolean; status: string }> = {
-  'aes-128-cbc': { keyBits: 128, blockSize: '16 B', mode: 'CBC', padded: true, status: 'Standard' },
-  'aes-128-cfb128': { keyBits: 128, blockSize: '16 B', mode: 'CFB128', padded: false, status: 'Standard' },
-  'aes-128-ofb': { keyBits: 128, blockSize: '16 B', mode: 'OFB', padded: false, status: 'Standard' },
-  'aes-128-ctr': { keyBits: 128, blockSize: '16 B', mode: 'CTR', padded: false, status: 'Standard' },
-
-  'aes-192-cbc': { keyBits: 192, blockSize: '16 B', mode: 'CBC', padded: true, status: 'Standard' },
-  'aes-192-cfb128': { keyBits: 192, blockSize: '16 B', mode: 'CFB128', padded: false, status: 'Standard' },
-  'aes-192-ofb': { keyBits: 192, blockSize: '16 B', mode: 'OFB', padded: false, status: 'Standard' },
-  'aes-192-ctr': { keyBits: 192, blockSize: '16 B', mode: 'CTR', padded: false, status: 'Standard' },
-
   'aes-256-cbc': { keyBits: 256, blockSize: '16 B', mode: 'CBC', padded: true, status: 'Standard' },
   'aes-256-cfb128': { keyBits: 256, blockSize: '16 B', mode: 'CFB128', padded: false, status: 'Standard' },
   'aes-256-ofb': { keyBits: 256, blockSize: '16 B', mode: 'OFB', padded: false, status: 'Standard' },
@@ -60,10 +50,10 @@ export const BenchmarkView: React.FC = () => {
     <div>
       <div style={{ marginBottom: '24px' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text)' }}>
-          14-Variant Cryptographic Benchmark & Comparison
+          6-Variant Cryptographic Benchmark & Comparison
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--color-secondary-text)', marginTop: '4px' }}>
-          Empirical measurements comparing 14 independently encrypted copies of identical plaintexts. Evaluation across 3 AES key sizes (128, 192, 256 bits) crossed with 4 modes (CBC, CFB128, OFB, CTR), plus legacy references DES-CBC and RC4-256.
+          Empirical measurements comparing 6 independently encrypted copies of identical plaintexts. Evaluation across 4 AES-256 modes (CBC, CFB128, OFB, CTR), plus legacy references DES-CBC and RC4-256.
         </p>
       </div>
 

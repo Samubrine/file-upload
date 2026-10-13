@@ -11,6 +11,13 @@ data/*.db-shm
 *.db-wal
 *.db-shm
 
+benchmarks/benchmarks/
+
+# Local development secrets and generated analysis
+data/dev-keys.json
+dev-keys.json
+graphify-out/
+
 # Frontend dependencies and build cache
 frontend/node_modules/
 frontend/.vite/

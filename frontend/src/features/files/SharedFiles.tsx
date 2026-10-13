@@ -6,6 +6,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { FileIcon } from '../../components/FileIcon';
 import { Modal } from '../../components/Modal';
+import { FileBenchmarkModal } from './FileBenchmarkModal';
 
 export const SharedFiles: React.FC = () => {
   const [files, setFiles] = useState<FileDetail[]>([]);
@@ -16,6 +17,9 @@ export const SharedFiles: React.FC = () => {
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState('aes-256-ctr');
   const [downloading, setDownloading] = useState(false);
+
+  const [benchmarkModalOpen, setBenchmarkModalOpen] = useState(false);
+  const [benchmarkFile, setBenchmarkFile] = useState<DownloadFile | null>(null);
 
   useEffect(() => {
     loadSharedFiles();
@@ -38,6 +42,11 @@ export const SharedFiles: React.FC = () => {
     setActiveDownloadFile(f);
     setSelectedVariant('aes-256-ctr');
     setDownloadModalOpen(true);
+  };
+
+  const openBenchmark = (f: DownloadFile) => {
+    setBenchmarkFile(f);
+    setBenchmarkModalOpen(true);
   };
 
   const handleDownloadConfirm = async () => {
@@ -140,9 +149,14 @@ export const SharedFiles: React.FC = () => {
                     </td>
                     <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                       {canDl ? (
-                        <Button size="sm" variant="primary" onClick={() => openDownload(f)}>
-                          Download
-                        </Button>
+                        <div style={{ display: 'inline-flex', gap: '6px' }}>
+                          <Button size="sm" variant="primary" onClick={() => openDownload(f)}>
+                            Download
+                          </Button>
+                          <Button size="sm" variant="secondary" onClick={() => openBenchmark(f)}>
+                            Benchmark
+                          </Button>
+                        </div>
                       ) : (
                         <span style={{ fontSize: '12px', color: 'var(--color-secondary-text)' }}>
                           No Download Permission
@@ -199,6 +213,13 @@ export const SharedFiles: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Per-File Benchmark Modal */}
+      <FileBenchmarkModal
+        isOpen={benchmarkModalOpen}
+        onClose={() => setBenchmarkModalOpen(false)}
+        file={benchmarkFile}
+      />
     </div>
   );
 };

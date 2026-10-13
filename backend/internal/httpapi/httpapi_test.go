@@ -179,8 +179,8 @@ func TestEndToEndPermissionsAndLifecycle(t *testing.T) {
 	fileDTO, fileEtag := clientA.uploadFile(t, "report.pdf", pdfContent, "document")
 	fileID := fileDTO.ID
 
-	if len(fileDTO.Variants) != 14 {
-		t.Fatalf("expected 14 variants, got %d", len(fileDTO.Variants))
+	if len(fileDTO.Variants) != 6 {
+		t.Fatalf("expected 6 variants, got %d", len(fileDTO.Variants))
 	}
 
 	// 4. Test Hidden File State

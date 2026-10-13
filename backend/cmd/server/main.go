@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/hex"
 	"flag"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -35,32 +37,13 @@ func main() {
 		activeKeyID = "root-1"
 	}
 
-	rootKeyHex := os.Getenv("CRYPTO_ROOT_KEY_" + activeKeyID)
-	var rootKey []byte
-	if rootKeyHex != "" {
-		var err error
-		rootKey, err = hex.DecodeString(rootKeyHex)
-		if err != nil || len(rootKey) != 32 {
-			log.Fatalf("Invalid CRYPTO_ROOT_KEY_%s: must be 32 bytes hex", activeKeyID)
-		}
-	} else {
-		// Dev default fallback: generate 32 bytes or deterministic dev key
-		rootKey = []byte("ciphervault_dev_root_key_32_bytes!!")
-		log.Printf("NOTICE: Using default 32-byte development root key for id %s", activeKeyID)
-	}
+	rootKeyEnv := os.Getenv("CRYPTO_ROOT_KEY_" + activeKeyID)
+	rootKey := normalizeKey32(rootKeyEnv, "ciphervault_dev_root_key_32_byte")
+	log.Printf("Loaded 32-byte root key for active id: %s", activeKeyID)
 
-	indexKeyHex := os.Getenv("IDENTITY_INDEX_KEY")
-	var indexKey []byte
-	if indexKeyHex != "" {
-		var err error
-		indexKey, err = hex.DecodeString(indexKeyHex)
-		if err != nil || len(indexKey) != 32 {
-			log.Fatalf("Invalid IDENTITY_INDEX_KEY: must be 32 bytes hex")
-		}
-	} else {
-		indexKey = []byte("ciphervault_dev_index_key_32_byt!")
-		log.Printf("NOTICE: Using default 32-byte development identity index key")
-	}
+	indexKeyEnv := os.Getenv("IDENTITY_INDEX_KEY")
+	indexKey := normalizeKey32(indexKeyEnv, "ciphervault_dev_index_key_32_byt")
+	log.Printf("Loaded 32-byte identity index key")
 
 	kp := crypto.NewMemoryKeyProvider(map[string][]byte{
 		activeKeyID: rootKey,
@@ -123,5 +106,20 @@ func main() {
 		log.Printf("Shutdown error: %v", err)
 	}
 	log.Println("Server stopped")
+}
+
+func normalizeKey32(raw string, defaultVal string) []byte {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		raw = defaultVal
+	}
+	if b, err := hex.DecodeString(raw); err == nil && len(b) == 32 {
+		return b
+	}
+	if len(raw) == 32 {
+		return []byte(raw)
+	}
+	h := sha256.Sum256([]byte(raw))
+	return h[:]
 }
 

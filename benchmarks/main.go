@@ -172,7 +172,10 @@ func parseServerTiming(header string) (dbNs, kdfNs, macNs, decryptNs, totalNs in
 func main() {
 	log.Println("Starting CipherVault reproducible benchmark protocol...")
 
-	outDir := filepath.Join("benchmarks", "results")
+	outDir := "results"
+	if _, err := os.Stat("benchmarks"); err == nil {
+		outDir = filepath.Join("benchmarks", "results")
+	}
 	if err := os.MkdirAll(outDir, 0755); err != nil {
 		log.Fatalf("Failed to create results dir: %v", err)
 	}

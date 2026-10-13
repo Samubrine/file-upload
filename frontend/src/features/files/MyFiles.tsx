@@ -5,6 +5,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { FileIcon } from '../../components/FileIcon';
 import { Modal } from '../../components/Modal';
+import { FileBenchmarkModal } from './FileBenchmarkModal';
 
 export const MyFiles: React.FC = () => {
   const [files, setFiles] = useState<OwnerFile[]>([]);
@@ -44,6 +45,10 @@ export const MyFiles: React.FC = () => {
   const [grantType, setGrantType] = useState<'metadata' | 'download'>('metadata');
   const [grantLoading, setGrantLoading] = useState(false);
 
+  // Benchmark modal
+  const [benchmarkModalOpen, setBenchmarkModalOpen] = useState(false);
+  const [benchmarkFile, setBenchmarkFile] = useState<OwnerFile | null>(null);
+
   useEffect(() => {
     loadFiles();
   }, []);
@@ -66,7 +71,7 @@ export const MyFiles: React.FC = () => {
     if (!uploadFile) return;
 
     setUploading(true);
-    setUploadStatus('Generating 14 independent cryptographic variants...');
+    setUploadStatus('Generating 6 independent cryptographic variants...');
     setError(null);
 
     const formData = new FormData();
@@ -93,6 +98,11 @@ export const MyFiles: React.FC = () => {
     setActiveFile(f);
     setSelectedVariant('aes-256-ctr');
     setDownloadModalOpen(true);
+  };
+
+  const openBenchmark = (f: OwnerFile) => {
+    setBenchmarkFile(f);
+    setBenchmarkModalOpen(true);
   };
 
   const handleDownloadConfirm = async () => {
@@ -342,7 +352,7 @@ export const MyFiles: React.FC = () => {
           <div style={{ fontSize: '32px', marginBottom: '8px' }}>📦</div>
           <p style={{ fontWeight: 600, color: 'var(--color-text)' }}>Your vault is empty</p>
           <p style={{ fontSize: '13px', color: 'var(--color-secondary-text)', marginTop: '4px' }}>
-            Upload a document, mock ID, image, or video above to create 14 encrypted copies.
+            Upload a document, mock ID, image, or video above to create 6 encrypted copies.
           </p>
         </div>
       ) : (
@@ -398,6 +408,9 @@ export const MyFiles: React.FC = () => {
                       <Button size="sm" variant="primary" onClick={() => openDownload(f)}>
                         Download
                       </Button>
+                      <Button size="sm" variant="secondary" onClick={() => openBenchmark(f)}>
+                        Benchmark
+                      </Button>
                       <Button size="sm" variant="secondary" onClick={() => openGrants(f)}>
                         Share
                       </Button>
@@ -424,7 +437,7 @@ export const MyFiles: React.FC = () => {
         {activeFile && (
           <div>
             <p style={{ fontSize: '14px', marginBottom: '16px' }}>
-              Select which of the 14 independently stored cipher variants to authenticate and decrypt for <strong>{activeFile.filename}</strong>:
+              Select which of the 6 independently stored cipher variants to authenticate and decrypt for <strong>{activeFile.filename}</strong>:
             </p>
             <div style={{ marginBottom: '20px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '6px' }}>
@@ -529,7 +542,7 @@ export const MyFiles: React.FC = () => {
       <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title="Delete File Permanently">
         <div>
           <p style={{ fontSize: '14px', marginBottom: '16px' }}>
-            Are you sure you want to delete <strong>{activeFile?.filename}</strong>? All 14 encrypted copies and recipient access grants will be permanently purged from SQLite.
+            Are you sure you want to delete <strong>{activeFile?.filename}</strong>? All 6 encrypted copies and recipient access grants will be permanently purged from SQLite.
           </p>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
             <Button variant="secondary" onClick={() => setDeleteModalOpen(false)}>
@@ -629,6 +642,13 @@ export const MyFiles: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Per-File Benchmark Modal */}
+      <FileBenchmarkModal
+        isOpen={benchmarkModalOpen}
+        onClose={() => setBenchmarkModalOpen(false)}
+        file={benchmarkFile}
+      />
     </div>
   );
 };

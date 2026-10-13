@@ -185,16 +185,8 @@ var Registry = map[string]VariantSpec{
 	},
 }
 
-// AllVariantIDs returns the 14 supported variant IDs in canonical order
+// AllVariantIDs returns the 6 supported variant IDs in canonical order (AES-256 variants + DES + RC4)
 var AllVariantIDs = []string{
-	VariantAES128CBC,
-	VariantAES128CFB128,
-	VariantAES128OFB,
-	VariantAES128CTR,
-	VariantAES192CBC,
-	VariantAES192CFB128,
-	VariantAES192OFB,
-	VariantAES192CTR,
 	VariantAES256CBC,
 	VariantAES256CFB128,
 	VariantAES256OFB,

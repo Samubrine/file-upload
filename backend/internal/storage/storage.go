@@ -401,8 +401,8 @@ func (db *DB) PurgeExpiredSessions(tx *sql.Tx) error {
 
 // Payload and PayloadVariants methods
 func (db *DB) CreatePayloadWithVariants(tx *sql.Tx, p PayloadRow, variants []PayloadVariantRow) error {
-	if len(variants) != 14 {
-		return fmt.Errorf("must provide exactly 14 payload variants, got %d", len(variants))
+	if len(variants) != 6 {
+		return fmt.Errorf("must provide exactly 6 payload variants, got %d", len(variants))
 	}
 	pQuery := `
 INSERT INTO payloads (id, kind, context_owner_id, context_file_id, content_revision, created_at)
