@@ -1,6 +1,8 @@
 # Security audit findings ledger
 
-Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every finding has a regression test written first and observed failing before the fix; each fix is its own commit gated on go test -race ./... .
+Branch: codex/security-hardening (baseline 061aa68, then fixes in order). Every finding has a proof test that was observed failing before its fix. Commits V11 to V20 carry red proof tests first (4ab355c), then fix commits that turn them green without breaking any earlier passing test.
+
+## Findings
 
 | ID | Severity | Location | Proof test | Fix commit | Status | Finding |
 |---|---|---|---|---|---|---|
@@ -28,55 +30,33 @@ Branch: codex/security-hardening. Baseline commit 061aa68 (14 Oct 2026). Every f
 | V22 | Medium | httpapi/server.go static fallback | httpapi/sec_v22_static_test.go | static root served via fs.FS; guard test | fixed | Static fallback joins request path to disk path (gosec G703) |
 | V23 | Low | auth/password.go, storage/storage.go, cmd/server | gosec ./... rerun | hygiene; remaining scanner notes justified in ledger | fixed | Hygiene: uint8 narrowing in legacy Argon2 parse (G115), 0755 data dir (G301), env value logged raw (G706), unchecked errors (G104) |
 
-## Accepted scanner findings (justified, not fixed)
+V9 and V10 share one commit (dcdf3b5) because the allowlist and the filename validator live in the same file. V6 has a follow-up test commit (9d675be) that pins the limiter clock, because bcrypt under -race could refill buckets mid-test.
 
-- gosec G405/G502/G503 and staticcheck SA1019 (DES, RC4, CFB, OFB): required by the assignment comparison registry (ADR 002). Every variant is wrapped in HMAC-SHA256 encrypt-then-MAC, and DES/RC4 are labelled educational only.
-- gosec G115 at crypto/envelope.go header length (int to uint32) and crypto/padding.go (int to byte): bounded by MaxHeaderLength=4096 and by the explicit blockSize<=255 check.
-- gosec G705 on the download body write: responses are application/octet-stream attachments with nosniff and a sandbox CSP (V16).
+## Verification evidence
 
-## Coverage evidence (graphify + rg, baseline)
+- go vet ./... (backend and benchmarks): clean.
+- go test -race -count=1 ./... on go1.26.9: all packages ok (cmd/server, auth, crypto, files, httpapi, storage).
+- govulncheck ./... on go1.26.9: no reachable vulnerabilities. One finding in a required module is reported as not called by this code. It was 12 reachable standard-library findings on go1.26.4 (V21).
+- gosec ./...: 15 issues remain. Each is accepted below. Baseline was 23.
+- staticcheck ./...: 4 findings, all SA1019 for CFB and OFB (see accepted list). Baseline had 6 findings including unused fields and an unused variable, all fixed.
+- npm audit (frontend): 0 vulnerabilities. Frontend dependencies did not change.
+- npm run build: passes.
+- Live smoke test (backend/cmd/smoke against the built binary on port 8097, public origin matching): register with Origin header 201; reload restores session 200 with a usable CSRF token; upload 201 with 6 variants; recipient downloads all six variants byte-identical (SHA-256 match); owner revokes; revoked recipient gets 404; cross-site login 403; cross-site listing change 403. Passed.
 
-- {file_id} routes (9), all behind RequireAuth:
+## Accepted scanner findings (justified, not suppressed)
 
-```text
-88:	authed("GET /files/{file_id}", s.handleGetFile)
-89:	authed("PATCH /files/{file_id}", s.handleRenameFile)
-90:	authed("DELETE /files/{file_id}", s.handleDeleteFile)
-91:	mux.Handle("PUT /files/{file_id}/content", authMiddleware.RequireAuth(s.uploadQueue.Limit(http.HandlerFunc(s.handleReplaceContent))))
-92:	authed("PUT /files/{file_id}/listing", s.handleSetListing)
-93:	authed("GET /files/{file_id}/grants", s.handleGetGrants)
-94:	authed("PUT /files/{file_id}/grants/{username}", s.handlePutGrant)
-95:	authed("DELETE /files/{file_id}/grants/{username}", s.handleDeleteGrant)
-96:	authed("GET /files/{file_id}/download", s.handleDownload)
-```
+- gosec G405, G502, G503 and staticcheck SA1019 (DES, RC4, CFB, OFB): required by the comparison registry in ADR 002. Every variant is wrapped in HMAC-SHA256 encrypt-then-MAC. DES and RC4 are labelled educational in the UI and report.
+- gosec G115 in crypto/envelope.go (header length to uint32): Seal refuses headers above MaxHeaderLength (4096) before this conversion.
+- gosec G115 in crypto/padding.go (PKCS#7 pad length to byte): PKCS7Pad and PKCS7Unpad reject block sizes above 255.
+- gosec G115 in auth/password.go (legacy Argon2id parameter and key length): values are parsed with explicit bit sizes; only hashes stored by this application are verified.
+- gosec G124 in httpapi/handlers_auth.go (cookie Secure attribute): Secure is set from the -secure-cookies flag by design. HttpOnly and SameSite=Strict are always set.
+- gosec G705 in httpapi/handlers_files.go (download body): responses are application/octet-stream attachments with nosniff, a restrictive CSP, and no-store.
+- gosec G706 in httpapi/errors.go and cmd/server/main.go (log lines): values are quoted with %q, and the request ID is validated first (V17).
 
-- crypto.Open callers (4), all inside files/users services after an ownership or permission check:
+## Limits that remain
 
-```text
-backend\internal\files\files.go:132:	pt, _, err := crypto.Open(ctx, s.keyProvider, variantRow.Envelope)
-backend\internal\files\files.go:157:	pt, _, err := crypto.Open(ctx, s.keyProvider, variantRow.Envelope)
-backend\internal\files\files.go:352:		pt, openTimings, err := crypto.Open(ctx, s.keyProvider, vRow.Envelope)
-backend\internal\users\users.go:332:	plaintext, _, err := crypto.Open(ctx, s.keyProvider, variantRow.Envelope)
-```
-
-- err.Error() sites in httpapi (38 before V11):
-
-```text
-backend/internal/httpapi\handlers_files.go:23
-backend/internal/httpapi\handlers_me.go:7
-backend/internal/httpapi\handlers_grants.go:5
-backend/internal/httpapi\handlers_auth.go:3
-```
-
-- Raw JSON decode sites (8 before V7):
-
-```text
-backend/internal/httpapi\handlers_auth.go:41:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_auth.go:74:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_grants.go:50:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_me.go:51:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_me.go:80:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_me.go:107:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_files.go:202:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-backend/internal/httpapi\handlers_files.go:317:	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
-```
+- Rate limits and the login-timing equalizer are per process. A restart clears limiter state.
+- The Origin check trusts the Host header for same-origin matching. Deploy behind the configured public origin only.
+- Development keys in data/dev-keys.json are for local use. Losing that file makes development data unrecoverable (ADR 013).
+- Only go1.26.9 was verified. The toolchain download came through a module proxy because the default proxy was unreachable from this machine.
+- Two items from the audit sweep are not fixes but are recorded: the CFB and OFB modes are kept for the assignment comparison, and gofmt reports CRLF-only differences across untouched files.

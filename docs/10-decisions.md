@@ -22,3 +22,15 @@ Baseline v1.0, 6 October 2026. Confirmed scope and delegated defaults distinguis
 
 ## External grading dependencies
 Lecturer has not confirmed the fourteen-copy interpretation, the four selected AES modes, or technical index/hash exceptions. Assignment may count modes differently. Documentation makes choices explicit without inventing approval. If clarified differently, amend registry/traceability and all affected acceptance checks together.
+
+## Security hardening decisions (14 October 2026)
+
+Recorded during the security audit (docs/security-audit.md). Each entry names the requirement it affects and the test that proves it.
+
+| ADR | Decision | Authority / rationale | Effect on requirements, contracts and tests |
+|---|---|---|---|
+| 011 | Passwords are hashed with bcrypt (DefaultCost). Passwords over 72 UTF-8 bytes are refused with 422, never truncated. | User instruction to use bcrypt; bcrypt silently ignores bytes after 72, so two different passwords could log in to one account. Existing Argon2id hashes still verify. | AUTH-01 and PROF-01 input limits; docs/05 password section; contracts/openapi.json Register and PasswordChange descriptions. Tests: httpapi sec_v04_bcrypt_test.go. |
+| 012 | Upload allowlist is the 12 specified extensions plus .jpe, .jfif, .gif, .bmp, .tif, .tiff, .m4v and .mkv. Every type must match its file signature. SVG, archives, plaintext, macro-enabled and legacy presentation formats are refused. | User decision to keep only aliases whose signatures can be verified. | FILE-01 allowlist in docs/01-product.md. Tests: files sec_v09_allowlist_test.go, sec_v10_filename_test.go. |
+| 013 | With no key environment variables, the server generates random 32-byte development keys into data/dev-keys.json (owner-only, gitignored). No key constant is compiled in. Environment keys take priority. | User decision. Development convenience only: deleting the file makes development data unrecoverable, as documented in docs/05. | CRYPTO-01 key management. Test: cmd/server devkeys_test.go. |
+| 014 | Browser-facing hardening: mutating requests from another origin are refused (Origin and Sec-Fetch-Site checks against -public-origin); login, registration and grant changes are rate limited in memory; -secure-cookies enables the __Host- cookie prefix, Secure, and HSTS; every response carries a restrictive Content-Security-Policy. | Plan approved by user. The app is a single process, so in-memory state is sufficient. | PRIV-01 and UX-01. Contracts: 429 and 413 responses in contracts/openapi.json. Tests: sec_v03, sec_v06, sec_v15, sec_v16_17. |
+

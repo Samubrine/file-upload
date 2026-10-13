@@ -26,3 +26,5 @@ Passwords are Argon2id hashes with per-password CSPRNG salt >=16 bytes, memory >
 
 ## Correctness evidence
 Known-answer vectors from trusted sources for underlying primitives; roundtrip across all fourteen variants; boundary lengths 0/1/block-1/block/block+1; invalid key/IV/mode; ciphertext/header/tag mutation; cross-user/payload/revision swapping; wrong key ID; CBC invalid padding; repeated identical plaintext creates different envelopes; concurrent RC4 requests never share cipher state. Internal empty payload tests are required even though empty file uploads are rejected.
+
+Update (ADR 011): new passwords are bcrypt hashes at DefaultCost with a per-hash random salt. Passwords over 72 UTF-8 bytes are refused, because bcrypt ignores everything after 72 bytes. Existing Argon2id hashes still verify; they are not rewritten.

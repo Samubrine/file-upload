@@ -36,7 +36,7 @@ Full name: trim, 1–100 Unicode characters. Username: ASCII [a-z0-9_], 3–32 c
 ## File limits
 Images/documents: 20 MiB each. Video: 50 MiB each. Logical quota: 100 MiB and 100 files per user. Physical live-payload quota: 2 GiB/user, 10 GiB/instance. Calculate actual fourteen-envelope footprint before commit. These are classroom defaults rather than universal industry standards. Replace counts old revision as credited within transaction; reject if resulting logical/physical quota is exceeded. Operational headroom for transactions/WAL/backups is additional to quotas.
 
-Allowlist: .jpg/.jpeg/.png/.webp (image); .pdf; .doc/.docx; .xls/.xlsx; .mp4/.webm/.mov (video). No SVG, HTML, executables, archives, audio-only formats, folders, or batch uploads. One file/request. Do not imply stored files have been malware scanned.
+Allowlist: .jpg/.jpeg/.png/.webp (image); .pdf; .doc/.docx; .xls/.xlsx; .mp4/.webm/.mov (video). Verifiable aliases also accepted: .jpe/.jfif (jpeg), .gif, .bmp, .tif/.tiff (image), .m4v (mp4), .mkv (video). Every type must match its file signature (ADR 012). Refused: SVG, HTML, executables, archives, plaintext, macro-enabled and legacy presentation formats, audio-only formats, folders, or batch uploads. One file/request. Do not imply stored files have been malware scanned.
 
 ## Non-goals
 Content viewing, video streaming, online editing, search inside files, OCR, public/anonymous sharing links, admin access to user content, notifications/email, MFA, password recovery, resumable uploads, multi-instance deployment, virus-scanning service, retained revisions, user activity feeds, production compliance certification.

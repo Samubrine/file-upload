@@ -89,6 +89,16 @@
               }
             }
           },
+          "413": {
+            "description": "Request body exceeds 64 KiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Invalid field or permission combination",
             "content": {
@@ -100,7 +110,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded",
+            "description": "Too many registrations: 5 per minute per IP. Retry-After is set.",
             "content": {
               "application/json": {
                 "schema": {
@@ -190,8 +200,18 @@
               }
             }
           },
+          "413": {
+            "description": "Request body exceeds 64 KiB.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "429": {
-            "description": "Rate limit exceeded",
+            "description": "Too many attempts: 10 per minute per IP and username. Retry-After is set.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1005,7 +1025,7 @@
       "post": {
         "operationId": "uploadFile",
         "summary": "uploadFile",
-        "description": "One validated file. category defaults by server type; id_card only for image. Owner from session, not body. Fresh hidden file and 14 content + 14 metadata copies.",
+        "description": "One validated file. category defaults by server type; id_card only for image. Owner from session, not body. Fresh hidden file and 14 content + 14 metadata copies. Exactly one file part; a second file part returns 400 MULTIPLE_FILES. The body is capped at 52 MiB and read as a stream; larger bodies return 413.",
         "security": [
           {
             "sessionCookie": []
@@ -2381,7 +2401,7 @@
             }
           },
           "429": {
-            "description": "Rate limit exceeded",
+            "description": "Too many grant changes: 30 per minute per user. Retry-After is set.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2830,7 +2850,8 @@
                 "rc4-256"
               ],
               "default": "aes-256-ctr"
-            }
+            },
+            "description": "Unknown variant returns 400 UNKNOWN_VARIANT."
           }
         ]
       }
@@ -2927,7 +2948,8 @@
             "type": "string",
             "minLength": 12,
             "maxLength": 128,
-            "writeOnly": true
+            "writeOnly": true,
+            "description": "12 to 128 characters and at most 72 UTF-8 bytes (bcrypt input limit). Longer values are refused with 422 and never truncated."
           },
           "notice_version": {
             "type": "string"
@@ -3028,7 +3050,8 @@
             "type": "string",
             "minLength": 12,
             "maxLength": 128,
-            "writeOnly": true
+            "writeOnly": true,
+            "description": "12 to 128 characters and at most 72 UTF-8 bytes (bcrypt input limit). Longer values are refused with 422 and never truncated."
           }
         },
         "required": [
