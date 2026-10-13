@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"time"
 	"sync"
+	"time"
 
 	"ciphervault/internal/apperr"
 	"ciphervault/internal/auth"
@@ -27,8 +27,8 @@ var (
 
 const (
 	CurrentNoticeVersion = "1.0"
-	LogicalQuotaBytes    = 100 * 1024 * 1024       // 100 MiB
-	PhysicalQuotaBytes   = 2 * 1024 * 1024 * 1024  // 2 GiB
+	LogicalQuotaBytes    = 100 * 1024 * 1024      // 100 MiB
+	PhysicalQuotaBytes   = 2 * 1024 * 1024 * 1024 // 2 GiB
 	FileCountLimit       = 100
 )
 
@@ -513,4 +513,3 @@ func (s *Service) GetQuota(c context.Context, userID string) (*storage.QuotaUsag
 	})
 	return usage, err
 }
-

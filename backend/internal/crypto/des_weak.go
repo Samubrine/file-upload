@@ -41,4 +41,3 @@ func IsDESWeakKey(key []byte) bool {
 	}
 	return false
 }
-

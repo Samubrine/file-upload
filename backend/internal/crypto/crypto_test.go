@@ -27,12 +27,12 @@ func TestAllVariantsRoundtrip(t *testing.T) {
 	testPayloads := [][]byte{
 		[]byte(""),
 		[]byte("a"),
-		[]byte("1234567"),         // 7 bytes (DES block - 1)
-		[]byte("12345678"),        // 8 bytes (DES block)
-		[]byte("123456789"),       // 9 bytes (DES block + 1)
-		[]byte("123456789012345"), // 15 bytes (AES block - 1)
-		[]byte("1234567890123456"),// 16 bytes (AES block)
-		[]byte("12345678901234567"),// 17 bytes (AES block + 1)
+		[]byte("1234567"),           // 7 bytes (DES block - 1)
+		[]byte("12345678"),          // 8 bytes (DES block)
+		[]byte("123456789"),         // 9 bytes (DES block + 1)
+		[]byte("123456789012345"),   // 15 bytes (AES block - 1)
+		[]byte("1234567890123456"),  // 16 bytes (AES block)
+		[]byte("12345678901234567"), // 17 bytes (AES block + 1)
 		bytes.Repeat([]byte("A"), 1024),
 		bytes.Repeat([]byte("B"), 65536),
 	}
@@ -290,5 +290,3 @@ func TestPKCS7PaddingValidation(t *testing.T) {
 		t.Errorf("expected ErrInvalidPadding on >blockSize padding byte, got %v", err)
 	}
 }
-
-

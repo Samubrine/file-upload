@@ -803,4 +803,3 @@ WHERE u.id = ?;
 
 	return &u, nil
 }
-

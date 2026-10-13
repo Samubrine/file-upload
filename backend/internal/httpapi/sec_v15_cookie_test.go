@@ -29,7 +29,7 @@ func TestV15SecureCookieAttributes(t *testing.T) {
 	server := NewServer(ServerConfig{
 		DB: db, UsersService: uSvc, FilesService: files.NewService(db, kp, rootKeyID),
 		SharingService: sharing.NewService(db, indexKey, uSvc.UsernameByID),
-		CookieName: "ciphervault_session", SecureCookies: true, PublicOrigin: "https://ciphervault.example",
+		CookieName:     "ciphervault_session", SecureCookies: true, PublicOrigin: "https://ciphervault.example",
 	})
 
 	body := jsonBody(t, map[string]any{"full_name": "Alice", "username": "alice", "email": "alice@example.com",

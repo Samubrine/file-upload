@@ -2,8 +2,8 @@ package httpapi
 
 import (
 	"database/sql"
-	"errors"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -168,7 +168,7 @@ func (s *Server) setSessionCookie(w http.ResponseWriter, rawSession string) {
 	})
 }
 
-func (s *Server) clearSessionCookie(w http.ResponseWriter, ) {
+func (s *Server) clearSessionCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     s.cookieName,
 		Value:    "",
@@ -179,4 +179,3 @@ func (s *Server) clearSessionCookie(w http.ResponseWriter, ) {
 		MaxAge:   -1,
 	})
 }
-

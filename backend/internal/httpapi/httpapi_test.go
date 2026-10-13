@@ -19,11 +19,11 @@ import (
 )
 
 type testClient struct {
-	server       *Server
-	cookie       *http.Cookie
-	csrfToken    string
-	username     string
-	etag         string
+	server    *Server
+	cookie    *http.Cookie
+	csrfToken string
+	username  string
+	etag      string
 }
 
 func setupTestServer(t *testing.T) (*Server, *storage.DB) {
@@ -340,4 +340,3 @@ func TestEndToEndPermissionsAndLifecycle(t *testing.T) {
 		t.Errorf("expected 404 after file delete, got %d", w.Code)
 	}
 }
-

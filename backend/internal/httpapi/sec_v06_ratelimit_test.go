@@ -81,4 +81,3 @@ func TestV6GrantChangesRateLimitedPerUser(t *testing.T) {
 		jsonBody(t, GrantSetInput{ViewMetadata: true}), "application/json", etag)
 	expectStatus(t, w, http.StatusTooManyRequests, "31st grant change in one minute")
 }
-

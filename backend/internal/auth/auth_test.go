@@ -64,4 +64,3 @@ func TestCSRFValidation(t *testing.T) {
 		t.Errorf("expected bad CSRF to fail")
 	}
 }
-

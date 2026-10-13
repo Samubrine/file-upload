@@ -48,4 +48,3 @@ func ComputeEmailLookup(identityIndexKey []byte, email string) []byte {
 	h.Write([]byte("email:" + norm))
 	return h.Sum(nil)
 }
-

@@ -41,4 +41,3 @@ func PKCS7Unpad(data []byte, blockSize int) ([]byte, error) {
 	}
 	return data[:len(data)-padLen], nil
 }
-

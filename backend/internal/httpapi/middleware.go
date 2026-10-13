@@ -155,7 +155,7 @@ func (m *SessionAuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 
 // UploadQueue limits concurrent heavy upload/replace jobs
 type UploadQueue struct {
-	sem  chan struct{}
+	sem chan struct{}
 }
 
 func NewUploadQueue(capacity int) *UploadQueue {
@@ -190,4 +190,3 @@ func ParseIfMatch(header string) (int64, error) {
 	}
 	return val, nil
 }
-

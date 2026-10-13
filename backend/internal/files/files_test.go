@@ -48,4 +48,3 @@ func TestValidationRules(t *testing.T) {
 		t.Errorf("expected ErrFileTooLarge, got %v", err)
 	}
 }
-

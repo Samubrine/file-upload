@@ -135,4 +135,3 @@ func (s *Server) setupRoutes() {
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
 }
-

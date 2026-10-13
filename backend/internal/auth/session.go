@@ -39,4 +39,3 @@ func ValidateCSRF(rawCSRF string, expectedHash []byte) bool {
 	computed := HashToken(rawCSRF)
 	return subtle.ConstantTimeCompare(computed, expectedHash) == 1
 }
-

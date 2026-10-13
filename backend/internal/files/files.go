@@ -872,4 +872,3 @@ func (s *Service) ListListed(c context.Context, offset, limit int) ([]MetadataDT
 	}
 	return list, total, nil
 }
-

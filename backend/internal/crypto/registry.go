@@ -209,4 +209,3 @@ func IsValidVariant(id string) bool {
 }
 
 var ErrIntegrityCheckFailed = errors.New("integrity check failed")
-

@@ -456,4 +456,3 @@ func decryptCiphertext(spec VariantSpec, key, iv, ciphertext []byte) ([]byte, er
 		return nil, fmt.Errorf("unsupported algorithm: %s", spec.Algorithm)
 	}
 }
-

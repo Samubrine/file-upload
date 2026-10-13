@@ -36,7 +36,7 @@ func EvaluatePermissions(callerID string, f *storage.FileRow, g *storage.GrantRo
 	return PermissionEvaluation{
 		IsOwner:         isOwner,
 		CanManage:       isOwner,
-		CanDownload:      canDownload,
+		CanDownload:     canDownload,
 		CanViewMetadata: canViewMetadata,
 	}
 }
@@ -230,4 +230,3 @@ WHERE id = ? AND revision = ?;
 	}
 	return updatedFile, nil
 }
-

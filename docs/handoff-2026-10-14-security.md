@@ -7,7 +7,7 @@
 - Decisions made: ADRs 011 to 014 in docs/10-decisions.md. Authority: user decisions recorded in the session for bcrypt with a 72-byte limit, the trimmed allowlist, and generated dev keys. The rest follows the approved plan.
 - Actual implementation status: V1 to V23 fixed or verified (V22 was already safe; the static root is now served through fs.FS). The ledger lists each commit.
 - Verification: go vet ./... clean; go test -race -count=1 ./... passes on go1.26.9; govulncheck reports no reachable vulnerabilities; gosec 15 accepted findings (listed in the ledger); staticcheck 4 accepted SA1019 findings; npm audit 0; npm run build passes; live smoke test passes.
-- Failing or skipped checks: none. gofmt -l reports CRLF-only differences in files this work did not change.
+- Failing or skipped checks: none. gofmt -w was applied to backend/internal and backend/cmd; the formatting-only change was checked with a whitespace-insensitive diff and the full race suite passes after it.
 - Security and data-loss considerations: the secure cookie name, HSTS, and Origin checks need -secure-cookies and -public-origin set for production. Deleting data/dev-keys.json makes development data unrecoverable.
 - Contract and schema changes: contracts/openapi.json gained 413 responses on login and registration, a 429 on registration and login, a 72-byte password limit description, a single-file upload note, and an UNKNOWN_VARIANT note. Schema migration: none. The new session purge removes expired rows at startup and hourly.
 - Remaining work and next concrete task: decide whether the accepted CFB and OFB deprecation notices are acceptable for the assignment report, and merge the branch after review.

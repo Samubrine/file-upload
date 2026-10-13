@@ -111,4 +111,3 @@ func verifyArgon2(password, encodedHash string) (bool, error) {
 	computedHash := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, uint32(len(expectedHash)))
 	return subtle.ConstantTimeCompare(expectedHash, computedHash) == 1, nil
 }
-

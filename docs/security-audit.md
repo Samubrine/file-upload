@@ -59,4 +59,4 @@ V9 and V10 share one commit (dcdf3b5) because the allowlist and the filename val
 - The Origin check trusts the Host header for same-origin matching. Deploy behind the configured public origin only.
 - Development keys in data/dev-keys.json are for local use. Losing that file makes development data unrecoverable (ADR 013).
 - Only go1.26.9 was verified. The toolchain download came through a module proxy because the default proxy was unreachable from this machine.
-- Two items from the audit sweep are not fixes but are recorded: the CFB and OFB modes are kept for the assignment comparison, and gofmt reports CRLF-only differences across untouched files.
+- The CFB and OFB modes are kept for the assignment comparison (see the staticcheck note above). gofmt -w was applied across backend/internal and backend/cmd; the whitespace-insensitive diff shows only import ordering and one signature spacing change.
