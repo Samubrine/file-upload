@@ -26,6 +26,7 @@ func main() {
 	staticDir := flag.String("static", "frontend/dist", "Path to static frontend dist directory")
 	benchmarkMode := flag.Bool("benchmark", false, "Enable Server-Timing metrics on download")
 	publicOrigin := flag.String("public-origin", "http://localhost:8080", "Origin browsers use to reach this server (for cross-site request checks)")
+	secureCookies := flag.Bool("secure-cookies", false, "Serve over HTTPS: Secure __Host- session cookie and HSTS (required for production)")
 	flag.Parse()
 
 	log.Printf("Starting CipherVault server on port %d...", *port)
@@ -52,6 +53,10 @@ func main() {
 		log.Fatalf("Failed to open database: %v", err)
 	}
 	defer db.Close()
+
+	purgeCtx, stopPurge := context.WithCancel(context.Background())
+	defer stopPurge()
+	db.StartSessionPurge(purgeCtx, time.Hour)
 	log.Printf("Connected to database at %s (WAL mode, foreign keys active)", *dbPath)
 
 	// Services
@@ -72,7 +77,7 @@ func main() {
 		FilesService:   filesService,
 		SharingService: sharingService,
 		CookieName:     "ciphervault_session",
-		SecureCookies:  false, // dev default
+		SecureCookies:  *secureCookies,
 		BenchmarkMode:  *benchmarkMode,
 		StaticDir:      actualStaticDir,
 		PublicOrigin:   *publicOrigin,

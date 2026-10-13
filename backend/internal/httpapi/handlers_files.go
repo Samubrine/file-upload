@@ -3,9 +3,11 @@ package httpapi
 import (
 	"encoding/json"
 	"fmt"
+	"mime"
 	"net/http"
 	"strconv"
 
+	"ciphervault/internal/crypto"
 	"ciphervault/internal/files"
 )
 
@@ -319,6 +321,10 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 	session := GetSession(r)
 	fileID := r.PathValue("file_id")
 	variantID := r.URL.Query().Get("variant")
+	if variantID != "" && !crypto.IsValidVariant(variantID) {
+		WriteError(w, r, http.StatusBadRequest, "UNKNOWN_VARIANT", "Choose one of the variants listed by /crypto/variants")
+		return
+	}
 
 	plaintext, meta, timings, err := s.filesService.Download(r.Context(), session.UserID, fileID, variantID)
 	if err != nil {
@@ -343,11 +349,10 @@ func (s *Server) handleDownload(w http.ResponseWriter, r *http.Request) {
 			float64(timings.OpenTotalDuration.Microseconds())/1000.0,
 		)
 		w.Header().Set("Server-Timing", serverTiming)
-		w.Header().Set("Timing-Allow-Origin", "*")
 	}
 
 	// Attachment disposition
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%q", meta.Filename))
+	w.Header().Set("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": meta.Filename}))
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Cache-Control", "no-store")
 	w.Header().Set("X-Content-Type-Options", "nosniff")

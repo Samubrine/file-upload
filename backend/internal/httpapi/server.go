@@ -60,6 +60,10 @@ func NewServer(cfg ServerConfig) *Server {
 		limiter:        newRateLimiter(),
 	}
 
+	if s.secureCookies {
+		// __Host- cookies must be Secure, Path=/ and have no Domain attribute.
+		s.cookieName = "__Host-ciphervault_session"
+	}
 	s.setupRoutes()
 	return s
 }
@@ -124,7 +128,7 @@ func (s *Server) setupRoutes() {
 	}
 
 	// Chain global middleware: RequestID -> SecurityHeaders -> OriginGuard -> Router
-	s.handler = RequestIDMiddleware(SecurityHeadersMiddleware(OriginGuard(s.publicOrigin, mux)))
+	s.handler = RequestIDMiddleware(SecurityHeadersMiddleware(s.secureCookies, OriginGuard(s.publicOrigin, mux)))
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {

@@ -121,6 +121,10 @@ func OpenDB(dataSourceName string) (*DB, error) {
 		return nil, fmt.Errorf("failed to apply migrations: %w", err)
 	}
 
+	if err := sdb.purgeExpiredSessions(); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("purge expired sessions: %w", err)
+	}
 	return sdb, nil
 }
 

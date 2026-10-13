@@ -40,7 +40,7 @@ func GetSession(r *http.Request) *storage.SessionRow {
 func RequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		reqID := r.Header.Get("X-Request-ID")
-		if reqID == "" {
+		if !validRequestID(reqID) {
 			reqID = uuid.New().String()
 		}
 		w.Header().Set("X-Request-ID", reqID)
@@ -49,12 +49,22 @@ func RequestIDMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func SecurityHeadersMiddleware(next http.Handler) http.Handler {
+// contentSecurityPolicy is sent on every response. Scripts and objects are limited
+// to same-origin files, and the page cannot be framed.
+const contentSecurityPolicy = "default-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'"
+
+// SecurityHeadersMiddleware sets the fixed security headers. HSTS is sent only
+// when the deployment is served over HTTPS (secure is true).
+func SecurityHeadersMiddleware(secure bool, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		w.Header().Set("X-Frame-Options", "DENY")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		w.Header().Set("Cache-Control", "no-store")
+		w.Header().Set("Content-Security-Policy", contentSecurityPolicy)
+		if secure {
+			w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		}
 		next.ServeHTTP(w, r)
 	})
 }
